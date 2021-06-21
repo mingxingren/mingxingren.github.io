@@ -320,7 +320,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-22 01:21:48" itemprop="dateModified" datetime="2021-06-22T01:21:48+08:00">2021-06-22</time>
+        <time title="修改时间：2021-06-22 01:31:07" itemprop="dateModified" datetime="2021-06-22T01:31:07+08:00">2021-06-22</time>
       </span>
 
   
@@ -334,7 +334,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>工作了三年，一直用<strong>QGui</strong> 开发比较简单的程序，之所以开始接触<strong>QML</strong>是因为现在客户端已经逐渐转入<strong>JavaScript</strong> 那套开发模式，这绝非危言耸听，并且推出 <strong>webassembly</strong> 后，我认为客户端和前端会逐渐走向<strong>UI</strong>逻辑由<strong>JavaScript</strong>编写，高性能的运算和操作系统设备会给 <strong>C/C++/Rust</strong> 编写的 <strong>webassembly</strong>  模块执行，这可能客户端真正意义上的强后端分离。虽然很不想承认，自己过去三年所学的技术正在犹如日出日落般推出主流的客户端开发，可能仅仅只能维持老的项目和嵌入式方向， 但客户端和前端能做的事情变得越来越多，深度也在不加深，以前人们一直以为后端比前端更有技术含量，从现在来看，前端程序员逐渐百花齐放起来，他们实现得很多效果，我自认拍马也赶不上。 为了以后能有碗饭吃，我决定给自己挖一口井，学习<strong>QML</strong> 并从<strong>QML</strong>逐渐过度到前端学习上。好了，现在开始吧！</p>
-<h2 id="一、什么是-QML"><a href="#一、什么是-QML" class="headerlink" title="一、什么是 QML"></a>一、什么是 <strong>QML</strong></h2><p>可能你对 <strong>HTML</strong> 比较熟悉，其实 <strong>QML</strong> 要做的事情和HTML 有些类似 —— 描述用户界面。<strong>QML</strong> 用于描述用户界面元素的形状和行为。用户界面能够使用 <strong>JavaScript</strong> 来提供修饰，或者增加更加复杂的逻辑。其结构层次：子元素从父元素上继承坐标系统，它的 <strong>x，y</strong> 坐标总是对应于它的父元素坐标系统。</p>
+<h2 id="什么是-QML"><a href="#什么是-QML" class="headerlink" title="什么是 QML"></a>什么是 <strong>QML</strong></h2><p>可能你对 <strong>HTML</strong> 比较熟悉，其实 <strong>QML</strong> 要做的事情和HTML 有些类似 —— 描述用户界面。<strong>QML</strong> 用于描述用户界面元素的形状和行为。用户界面能够使用 <strong>JavaScript</strong> 来提供修饰，或者增加更加复杂的逻辑。其结构层次：子元素从父元素上继承坐标系统，它的 <strong>x，y</strong> 坐标总是对应于它的父元素坐标系统。</p>
 <p>首先使用一个简单的 <strong>QML</strong> 例子：</p>
 <figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> QtQuick <span class="number">2.12</span></span><br><span class="line"><span class="keyword">import</span> QtQuick.Window <span class="number">2.12</span></span><br><span class="line"></span><br><span class="line"><span class="title">Window</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">640</span></span><br><span class="line">    <span class="attribute">height</span>: <span class="number">480</span></span><br><span class="line">    <span class="attribute">visible</span>: <span class="literal">true</span></span><br><span class="line">    <span class="attribute">title</span>: qsTr(<span class="string">&quot;测试窗口&quot;</span>)</span><br><span class="line">    <span class="title">Text</span> &#123;</span><br><span class="line">        <span class="attribute">id:</span><span class="string"> helloWord</span></span><br><span class="line">        <span class="attribute">text</span>: qsTr(<span class="string">&quot;hello world&quot;</span>)</span><br><span class="line">        <span class="attribute">anchors.centerIn</span>: <span class="built_in">parent</span></span><br><span class="line">        <span class="attribute">font.bold</span>: <span class="literal">true</span>;</span><br><span class="line">        <span class="attribute">font.pointSize</span>: <span class="number">20</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -346,7 +346,7 @@
 <li><p>任何在 <strong>QML</strong> 文档中的元素可以通过 属性<strong>id</strong> 进行访问，在同一个 .qml 文件里，<strong>id</strong> 是唯一的 （注意: <em><strong>一个元素id应该只在当前文档中被引用。QML提供了动态作用域的机制，后加载的文档会覆盖之前加载文档的元素id号，这样就可以引用已加载并且没有被覆盖的元素id，这有点类似创建全局变量。但不幸的是这样的代码阅读性很差。目前这个还没有办法解决这个问题，所以你使用这个机制的时候最好仔细一些甚至不要使用这种机制。如果你想向文档外提供元素的调用，你可以在根元素上使用属性导出的方式来提供</strong></em>。）</p>
 </li>
 </ul>
-<h2 id="二、元素属性-（Properties）"><a href="#二、元素属性-（Properties）" class="headerlink" title="二、元素属性 （Properties）"></a><strong>二、元素属性</strong> （Properties）</h2><p>属性是可以赋予静态值或绑定到动态表达式的对象的属性。属性的值可以由其他对象读取。通常，它也可以由另一个对象修改，除非特定的 <strong>QML</strong> 类型明确禁止对特定属性执行此操作。</p>
+<h2 id="元素属性-（Properties）"><a href="#元素属性-（Properties）" class="headerlink" title="元素属性 （Properties）"></a>元素属性 （Properties）</h2><p>属性是可以赋予静态值或绑定到动态表达式的对象的属性。属性的值可以由其他对象读取。通常，它也可以由另一个对象修改，除非特定的 <strong>QML</strong> 类型明确禁止对特定属性执行此操作。</p>
 <table>
 <thead>
 <tr>
@@ -432,7 +432,7 @@
 
 
 
-<h2 id="三、基本元素-（Basic-Element）"><a href="#三、基本元素-（Basic-Element）" class="headerlink" title="三、基本元素 （Basic Element）"></a>三、基本元素 （Basic Element）</h2><p>元素可以被分为可视化元素和非可视元素。一个可视化元素（例如矩形框Rectangle）有着几何形状并且可以在屏幕上显示。一个非可视化元素（例如计时器Timer）提供了常用的功能，通常用于操作可视化元素。</p>
+<h2 id="基本元素-（Basic-Element）"><a href="#基本元素-（Basic-Element）" class="headerlink" title="基本元素 （Basic Element）"></a>基本元素 （Basic Element）</h2><p>元素可以被分为可视化元素和非可视元素。一个可视化元素（例如矩形框Rectangle）有着几何形状并且可以在屏幕上显示。一个非可视化元素（例如计时器Timer）提供了常用的功能，通常用于操作可视化元素。</p>
 <p>Item 是所有可视化元素的基础对象，所有其他的可视化元素都继承自Item。 它自身不会有任何绘制操作，但是定义了所有可视化元素共有的属性：</p>
 <table>
 <thead>
@@ -466,10 +466,10 @@
 <td>states（状态列表属性）提供了元素当前所支持的状态列表，当前属性的改变也可以使用transitions（转变）属性列表来定义状态转变动画。</td>
 </tr>
 </tbody></table>
-<h3 id="四、定位元素-（Positioning-Element）"><a href="#四、定位元素-（Positioning-Element）" class="headerlink" title="四、定位元素 （Positioning Element）"></a>四、定位元素 （Positioning Element）</h3><p>分为：<strong>Column</strong>、<strong>Row</strong>、<strong>Grid（栅格布局）</strong>、<strong>Flow（流式）</strong></p>
-<h3 id="五、布局元素-（Layout-Items）"><a href="#五、布局元素-（Layout-Items）" class="headerlink" title="五、布局元素 （Layout Items）"></a>五、布局元素 （Layout Items）</h3><p>一般 <strong>QML</strong> 使用 <strong>anchors</strong>（锚）对元素进行布局。其优先级比几何变化（例如：<strong>x</strong>、<strong>y</strong>、<strong>width</strong>、<strong>height</strong>）高， 这可以理解成 <strong>QGui</strong></p>
+<h2 id="定位元素-（Positioning-Element）"><a href="#定位元素-（Positioning-Element）" class="headerlink" title="定位元素 （Positioning Element）"></a>定位元素 （Positioning Element）</h2><p>分为：<strong>Column</strong>、<strong>Row</strong>、<strong>Grid（栅格布局）</strong>、<strong>Flow（流式）</strong></p>
+<h2 id="布局元素-（Layout-Items）"><a href="#布局元素-（Layout-Items）" class="headerlink" title="布局元素 （Layout Items）"></a>布局元素 （Layout Items）</h2><p>一般 <strong>QML</strong> 使用 <strong>anchors</strong>（锚）对元素进行布局。其优先级比几何变化（例如：<strong>x</strong>、<strong>y</strong>、<strong>width</strong>、<strong>height</strong>）高， 这可以理解成 <strong>QGui</strong></p>
 <p>中布局优先级比 <strong>width</strong> 和 <strong>height</strong> 高。</p>
-<h3 id="六、声明信号和触发槽函数"><a href="#六、声明信号和触发槽函数" class="headerlink" title="六、声明信号和触发槽函数"></a>六、声明信号和触发槽函数</h3><p><strong>QML</strong> 和 <strong>QWidget</strong> 一样也有信号和槽函数，其声明方式如下：</p>
+<h2 id="声明信号和触发槽函数"><a href="#声明信号和触发槽函数" class="headerlink" title="声明信号和触发槽函数"></a>声明信号和触发槽函数</h2><p><strong>QML</strong> 和 <strong>QWidget</strong> 一样也有信号和槽函数，其声明方式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signal &lt;signalName&gt;[([&lt;type&gt; &lt;parameter name&gt;[, ...]])]</span><br></pre></td></tr></table></figure>
 
 <p>调用方式：</p>
