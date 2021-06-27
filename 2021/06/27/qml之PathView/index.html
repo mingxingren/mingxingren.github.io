@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="通过学习委托，涉及到 ListView、GridView、PathView等等；其中 PathView 的画风明显和 ListView 和 GridView 不一样，它的使用方式比较复杂，当然实现的效果真的很棒。那什么是 PathView 呢？ PathView的定义首先先看 Qt 对PathView的描述如下： 123&#x2F;&#x2F; 摘自 Qt Quick 5.12.2A PathView display">
+<meta property="og:type" content="article">
+<meta property="og:title" content="qml之PathView">
+<meta property="og:url" content="http://example.com/2021/06/27/qml%E4%B9%8BPathView/index.html">
+<meta property="og:site_name" content="mingxingren的博客">
+<meta property="og:description" content="通过学习委托，涉及到 ListView、GridView、PathView等等；其中 PathView 的画风明显和 ListView 和 GridView 不一样，它的使用方式比较复杂，当然实现的效果真的很棒。那什么是 PathView 呢？ PathView的定义首先先看 Qt 对PathView的描述如下： 123&#x2F;&#x2F; 摘自 Qt Quick 5.12.2A PathView display">
+<meta property="og:locale">
+<meta property="og:image" content="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021062701.png">
+<meta property="article:published_time" content="2021-06-27T09:54:00.000Z">
+<meta property="article:modified_time" content="2021-06-27T09:54:38.571Z">
+<meta property="article:author" content="mingxingren">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021062701.png">
+
+
+<link rel="canonical" href="http://example.com/2021/06/27/qml%E4%B9%8BPathView/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-Hans&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;06&#x2F;27&#x2F;qml%E4%B9%8BPathView&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;06&#x2F;27&#x2F;qml之PathView&#x2F;&quot;,&quot;title&quot;:&quot;qml之PathView&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>qml之PathView | mingxingren的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">mingxingren的博客</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PathView%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">PathView的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PathView%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">PathView的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PathLine%E4%BD%BF%E7%94%A8"><span class="nav-number">2.0.1.</span> <span class="nav-text">PathLine使用</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mingxingren</p>
+  <div class="site-description" itemprop="description">挖一口自己的井</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/27/qml%E4%B9%8BPathView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          qml之PathView
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-27 17:54:00 / 修改时间：17:54:38" itemprop="dateCreated datePublished" datetime="2021-06-27T17:54:00+08:00">2021-06-27</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>通过学习委托，涉及到 <strong>ListView</strong>、<strong>GridView</strong>、<strong>PathView</strong>等等；其中 <strong>PathView</strong> 的画风明显和 <strong>ListView</strong> 和 <strong>GridView</strong> 不一样，它的使用方式比较复杂，当然实现的效果真的很棒。那什么是 <strong>PathView</strong> 呢？</p>
+<h2 id="PathView的定义"><a href="#PathView的定义" class="headerlink" title="PathView的定义"></a>PathView的定义</h2><p>首先先看 <strong>Qt</strong> 对<strong>PathView</strong>的描述如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 摘自 Qt Quick 5.12.2</span><br><span class="line">A PathView displays data from models created from built-in QML types like ListModel and XmlListModel, or custom model classes defined in C++ that inherit from QAbstractListModel.</span><br><span class="line">The view has a model, which defines the data to be displayed, and a delegate, which defines how the data should be displayed. The delegate is instantiated for each item on the path. The items may be flicked to move them along the path.</span><br></pre></td></tr></table></figure>
+
+<p>这段描述比较轻描淡写，但它得作用类似 <strong>ListView</strong> 和 <strong>GridView</strong> 都是给 <strong>item</strong> 进行布局，但是不同于 <strong>ListView</strong> 列表形式的布局和 <strong>GirdView</strong> 栅格布局这种有规律描述布局，<strong>PathView</strong> 是根据用户提供路径， 将<strong>item</strong>按这个路径进行排布，比如：实现<strong>item</strong> 按照规则的曲线排布，这种排布方式是无规则的并不能通过一个统一的公式计算出<strong>item</strong>的分布。但<strong>PathView</strong> 可以实现类似的效果！通过自定义自己的路线组，让<strong>item</strong>按自定义的路径进行分布！</p>
+<h2 id="PathView的使用"><a href="#PathView的使用" class="headerlink" title="PathView的使用"></a>PathView的使用</h2><p>代码如下：</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">Component</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> delegate_1</span></span><br><span class="line">	<span class="title">Column</span> &#123;</span><br><span class="line">		<span class="attribute">id:</span><span class="string"> wrapper</span></span><br><span class="line">		<span class="attribute">opacity</span>: PathView.isCurrentItem ? <span class="number">1</span> : <span class="number">0.5</span></span><br><span class="line">		<span class="title">Text</span> &#123;</span><br><span class="line">			<span class="attribute">id:</span><span class="string"> nameText</span></span><br><span class="line">			<span class="attribute">text</span>: name</span><br><span class="line">			<span class="attribute">font.pointSize</span>: <span class="number">16</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">ListModel</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> list_model</span></span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Bill Jones&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Jane Doe&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">PathView</span> &#123;</span><br><span class="line">	<span class="attribute">anchors.fill</span>: <span class="built_in">parent</span></span><br><span class="line">	<span class="attribute">model</span>: list_model</span><br><span class="line">	<span class="attribute">delegate</span>: delegate_1</span><br><span class="line">	<span class="comment">// PathView 通过给予 path 属性自定义路径, 让 item 按 Path&#123;&#125; 定义路径分布</span></span><br><span class="line">	<span class="attribute">path</span>: <span class="title">Path</span>&#123;</span><br><span class="line">		<span class="attribute">startX</span>: <span class="number">200</span>; <span class="attribute">startY</span>: <span class="number">100</span>	<span class="comment">// 路径得起点 (200, 100)</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">200</span> &#125;	<span class="comment">// 从起点到 (200 + relativeX, 100, relativeY) 的直线</span></span><br><span class="line">		<span class="title">PathPercent</span> &#123; <span class="attribute">value</span>: <span class="number">0.5</span> &#125;	<span class="comment">// 设置前一个路径上可以分布多少比例的item 数量</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">-200</span> &#125; <span class="comment">// 以上一条路径的终点为起点开始的一条路径</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<strong>PathView</strong> 通过给予 <strong>path</strong> 属性自定义路径, 让 <strong>item</strong> 按 <strong>Path{}</strong> 定义路径分布。Path{} 提供了多个描述路径对象，如下图：</p>
+<p><img src="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021062701.png" alt="image-01"></p>
+<h4 id="PathLine使用"><a href="#PathLine使用" class="headerlink" title="PathLine使用"></a>PathLine使用</h4><p><strong>PathLine</strong> 顾名思义描述一条直线路径，其起点是上一条路径终点。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/06/12/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%89%E5%85%B3Qt%E7%9A%84%E9%97%AE%E9%A2%98/" rel="prev" title="开发中遇到的有关Qt的问题">
+                  <i class="fa fa-chevron-left"></i> 开发中遇到的有关Qt的问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mingxingren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
