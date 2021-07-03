@@ -395,7 +395,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-27 17:52:10" itemprop="dateModified" datetime="2021-06-27T17:52:10+08:00">2021-06-27</time>
+        <time title="修改时间：2021-07-04 01:44:53" itemprop="dateModified" datetime="2021-07-04T01:44:53+08:00">2021-07-04</time>
       </span>
 
   
@@ -562,6 +562,249 @@
 <p>附加属性使用样例：</p>
 <figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> QtQuick <span class="number">2.0</span></span><br><span class="line"></span><br><span class="line"><span class="title">ListView</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">240</span>; <span class="attribute">height</span>: <span class="number">320</span></span><br><span class="line">    <span class="attribute">model</span>: <span class="number">3</span></span><br><span class="line">    <span class="attribute">delegate</span>: <span class="title">Rectangle</span> &#123;</span><br><span class="line">        <span class="attribute">width</span>: <span class="number">100</span>; <span class="attribute">height</span>: <span class="number">30</span></span><br><span class="line">        <span class="attribute">color</span>: ListView.isCurrentItem ? <span class="string">&quot;red&quot;</span> : <span class="string">&quot;yellow&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+
+
+<h2 id="绘制组件-Canvas"><a href="#绘制组件-Canvas" class="headerlink" title="绘制组件 Canvas"></a>绘制组件 Canvas</h2><h2 id="粒子系统"><a href="#粒子系统" class="headerlink" title="粒子系统"></a>粒子系统</h2><h2 id="Loader-动态加载-、Binding-属性绑定-、-Connections-信号动态创建"><a href="#Loader-动态加载-、Binding-属性绑定-、-Connections-信号动态创建" class="headerlink" title="Loader(动态加载)、Binding(属性绑定)、 Connections(信号动态创建)"></a>Loader(动态加载)、Binding(属性绑定)、 Connections(信号动态创建)</h2><h2 id="QML-结合-C-使用"><a href="#QML-结合-C-使用" class="headerlink" title="QML 结合 C++ 使用"></a>QML 结合 C++ 使用</h2><p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/linuxAndMcu/p/11961090.html">https://www.cnblogs.com/linuxAndMcu/p/11961090.html</a></p>
+<h2 id="QQuick-提供的原生控件"><a href="#QQuick-提供的原生控件" class="headerlink" title="QQuick 提供的原生控件"></a>QQuick 提供的原生控件</h2><table>
+<thead>
+<tr>
+<th><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-abstractbutton.html">AbstractButton</a></th>
+<th>提供抽象按钮，抽象出来各种按钮通用功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-action.html">Action</a></td>
+<td>抽象用户界面操作</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-actiongroup.html">ActionGroup</a></td>
+<td>将 Action 组合</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-applicationwindow.html">ApplicationWindow</a></td>
+<td>支持页眉和页脚的顶级窗口</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-busyindicator.html">BusyIndicator</a></td>
+<td>指示后台活动，例如在加载内容</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-button.html">Button</a></td>
+<td>通过单击触发命令或响应的按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-buttongroup.html">ButtonGroup</a></td>
+<td>互斥的按钮组</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-checkbox.html">CheckBox</a></td>
+<td>勾选框</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-checkdelegate.html">CheckDelegate</a></td>
+<td>勾选框的委托</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-combobox.html">ComboBox</a></td>
+<td>下拉框</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-container.html">Container</a></td>
+<td>Abstract base type providing functionality common to containers</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html">Control</a></td>
+<td>对所有控件进行抽象</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-delaybutton.html">DelayButton</a></td>
+<td>长按按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-dial.html">Dial</a></td>
+<td>Circular dial that is rotated to set a value</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-dialog.html">Dialog</a></td>
+<td>弹出带标准按钮和标题的窗体，用于和用户临时交互</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-dialogbuttonbox.html">DialogButtonBox</a></td>
+<td>类似按钮布局，用户只需要在里面添加按钮，它会根据不同平台，对按钮进行先后顺序摆放</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-drawer.html">Drawer</a></td>
+<td>通过手势上下左右滑，滑出抽屉控件</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-frame.html">Frame</a></td>
+<td>给一组控件增加可视边框</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-groupbox.html">GroupBox</a></td>
+<td>给一组控件增加可视边框和标题，继承于 GroupBox</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-horizontalheaderview.html">HorizontalHeaderView</a></td>
+<td>水平方向表头</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-itemdelegate.html">ItemDelegate</a></td>
+<td>基础的Item委托</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-label.html">Label</a></td>
+<td>具有继承字体 带样式的文本标签</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-menu.html">Menu</a></td>
+<td>弹出菜单</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-menubar.html">MenuBar</a></td>
+<td>主窗体的菜单栏</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-menubaritem.html">MenuBarItem</a></td>
+<td>Presents a drop-down menu within a MenuBar</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-menuitem.html">MenuItem</a></td>
+<td>Presents an item within a Menu</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-menuseparator.html">MenuSeparator</a></td>
+<td>Separates a group of items in a menu from adjacent items</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-overlay.html">Overlay</a></td>
+<td>A window overlay for popups</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-page.html">Page</a></td>
+<td>带有页头和页脚的控件</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-pageindicator.html">PageIndicator</a></td>
+<td>类似于轮播图效果中指示控件</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-pane.html">Pane</a></td>
+<td>Provides a background matching with the application style and theme</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-popup.html">Popup</a></td>
+<td>弹出用户控件的基础类型</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-progressbar.html">ProgressBar</a></td>
+<td>进度条</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-radiobutton.html">RadioButton</a></td>
+<td>单选按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-radiodelegate.html">RadioDelegate</a></td>
+<td>单选按钮委托</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-rangeslider.html">RangeSlider</a></td>
+<td>Used to select a range of values by sliding two handles along a track</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-roundbutton.html">RoundButton</a></td>
+<td>A push-button control with rounded corners that can be clicked by the user</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-scrollbar.html">ScrollBar</a></td>
+<td>Vertical or horizontal interactive scroll bar</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-scrollindicator.html">ScrollIndicator</a></td>
+<td>Vertical or horizontal non-interactive scroll indicator</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-scrollview.html">ScrollView</a></td>
+<td>Scrollable view</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-slider.html">Slider</a></td>
+<td>Used to select a value by sliding a handle along a track</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-spinbox.html">SpinBox</a></td>
+<td>Allows the user to select from a set of preset values</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-splithandle.html">SplitHandle</a></td>
+<td>Provides attached properties for SplitView handles</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-splitview.html">SplitView</a></td>
+<td>Lays out items with a draggable splitter between each item</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-stackview.html">StackView</a></td>
+<td>Provides a stack-based navigation model</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-swipedelegate.html">SwipeDelegate</a></td>
+<td>Swipable item delegate</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-swipeview.html">SwipeView</a></td>
+<td>Enables the user to navigate pages by swiping sideways</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-switch.html">Switch</a></td>
+<td>开关按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-switchdelegate.html">SwitchDelegate</a></td>
+<td>开关按钮的委托</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-tabbar.html">TabBar</a></td>
+<td>Allows the user to switch between different views or subtasks</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-tabbutton.html">TabButton</a></td>
+<td>页签按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-textarea.html">TextArea</a></td>
+<td>输入文本区域（多行）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-textfield.html">TextField</a></td>
+<td>输入文本区域（单行）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-toolbar.html">ToolBar</a></td>
+<td>ToolButton和相关控件的容器对象</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-toolbutton.html">ToolButton</a></td>
+<td>对话框工具按钮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-toolseparator.html">ToolSeparator</a></td>
+<td>用于工具栏的分割符</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-tooltip.html">ToolTip</a></td>
+<td>提示</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-tumbler.html">Tumbler</a></td>
+<td>可以选择的旋转滚轮</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qml-qtquick-controls2-verticalheaderview.html">VerticalHeaderView</a></td>
+<td>垂直方向表头</td>
+</tr>
+</tbody></table>
 
       
     </div>
