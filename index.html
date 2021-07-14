@@ -117,9 +117,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
@@ -147,6 +151,96 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/14/WebAssembly%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/07/14/WebAssembly%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">WebAssembly环境配置</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-07-14 13:25:00 / 修改时间：13:25:53" itemprop="dateCreated datePublished" datetime="2021-07-14T13:25:00+08:00">2021-07-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="WebAssembly-介绍"><a href="#WebAssembly-介绍" class="headerlink" title="WebAssembly 介绍"></a>WebAssembly 介绍</h2><p>WebAssembly（缩写为 Wasm）是一种用于基于堆栈的虚拟机的二进制指令格式。 Wasm 被设计为编程语言的可移植编译目标，支持在 Web 上部署客户端和服务器应用程序。简单来说就是可以将C/C++/Rust等语言编写的程序运行在浏览器上，这种技术有些类似于以前ActiveX等各种浏览器插件技术，所不同是 Wasm 被现在各种浏览器厂商所支持！</p>
+<h2 id="Windows环境下，Qt配置WebAssembly"><a href="#Windows环境下，Qt配置WebAssembly" class="headerlink" title="Windows环境下，Qt配置WebAssembly"></a>Windows环境下，Qt配置WebAssembly</h2><p>目前 <strong>Qt5.15.2</strong> 版本支持 <strong>WebAssembly</strong> 编译！但在我配置的时候遇到了一些问题，步骤如下：</p>
+<ul>
+<li><p>首先在下载<strong>Qt</strong>时，选择版本 <strong>5.15.2</strong>，需要勾选 <strong>WebAssembly</strong>编译器，如下图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071401.png" alt="image-01"></p>
+</li>
+</ul>
+<ul>
+<li><p>当然因为缺少 [emscriptem][<a target="_blank" rel="noopener" href="https://emscripten.org/]">https://emscripten.org/]</a>  导致 <strong>Qt</strong>的 <strong>WebAssembly</strong> 不可用。[emscriptem][<a target="_blank" rel="noopener" href="https://emscripten.org/]">https://emscripten.org/]</a> 是一个WebAssembly编译器工具链，它是使用LLVM，注重速度、大小和web平台。通过<strong>git</strong> 或者直接访问<strong>github</strong>下载源码，在配置之前我们需要下载 <strong>python</strong> 来运行<strong>emscripten</strong>配置脚本。然后根据   [emscripten download][<a target="_blank" rel="noopener" href="https://emscripten.org/docs/getting_started/downloads.html]">https://emscripten.org/docs/getting_started/downloads.html]</a> 下载说明进行配置。 注意 Qt 5.15.2的 <strong>WebAssembly</strong>编译器是需要下载 emsdk 1.39.8，</p>
+<p>如下图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071402.png" alt="image-02"></p>
+</li>
+<li><p>配置好<strong>emscriptem</strong>后，打开<strong>QtCreator</strong>发现 <strong>Qt 5.15.2 WebAssembly</strong>依然是<strong>error</strong>状态如图:</p>
+</li>
+</ul>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071403.png" alt="image-03"></p>
+<p>​    之前浏览别人博客，有人说要把<strong>emsdk</strong> 文件中 <strong>.emscripten</strong> 文件替换到用户目录下，以便<strong>QtCreator</strong> 可以找到<strong>emsdk</strong>的编译器。但 是我试过之后没有效果。后面询问过朋友之后，发现通过在设备中添加 <strong>emsdk</strong> 的路径可以解决这个问题（朋友万岁！！！），如图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071404.png" alt="image-04"></p>
+<p>配置好设备之后重启一下<strong>QtCreator</strong>，应该就可以使用 <strong>Qt 5.15.2 WebAssembly</strong> 编译器了。</p>
+<h2 id="跑在浏览器上的C-Qt-程序"><a href="#跑在浏览器上的C-Qt-程序" class="headerlink" title="跑在浏览器上的C++ Qt 程序"></a>跑在浏览器上的C++ Qt 程序</h2><p>使用 <strong>Qt WebAssembly</strong> 进行编译后默认使用IE浏览器呈现效果，但是IE并不支持 <strong>WebAssembly</strong> ，可以用<strong>Chrome</strong>、<strong>Edge</strong>等浏览器查看效果！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/690454">https://cloud.tencent.com/developer/news/690454</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/feiyangqingyun/article/details/112986837">https://blog.csdn.net/feiyangqingyun/article/details/112986837</a></li>
+</ol>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
