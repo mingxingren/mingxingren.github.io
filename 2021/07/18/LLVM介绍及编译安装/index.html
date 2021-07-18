@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script><script src="/js/config.js"></script>
+<meta name="description" content="LLVM介绍LLVM的命名最早起源于底层语言虚拟机（Low Level Virtual Machine）的缩写 。它是一个用于建立编译器的基础框架，以C++编写。创建此工程的目的是对于任意汇编语言，利用该基础框架，构建一个包括编译时、链接时、执行时等的语言执行器。目前官方的LLVM只支持处理C&#x2F;C++，Objective-C三种语言，当然的也有的一些非官方的扩展，使其支持ActionScript、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLVM介绍及编译安装">
+<meta property="og:url" content="http://example.com/2021/07/18/LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/index.html">
+<meta property="og:site_name" content="mingxingren的博客">
+<meta property="og:description" content="LLVM介绍LLVM的命名最早起源于底层语言虚拟机（Low Level Virtual Machine）的缩写 。它是一个用于建立编译器的基础框架，以C++编写。创建此工程的目的是对于任意汇编语言，利用该基础框架，构建一个包括编译时、链接时、执行时等的语言执行器。目前官方的LLVM只支持处理C&#x2F;C++，Objective-C三种语言，当然的也有的一些非官方的扩展，使其支持ActionScript、">
+<meta property="og:locale">
+<meta property="og:image" content="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071801.jpg">
+<meta property="article:published_time" content="2021-07-18T15:51:00.000Z">
+<meta property="article:modified_time" content="2021-07-18T15:51:47.235Z">
+<meta property="article:author" content="mingxingren">
+<meta property="article:tag" content="LLVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071801.jpg">
+
+
+<link rel="canonical" href="http://example.com/2021/07/18/LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-Hans&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;07&#x2F;18&#x2F;LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;07&#x2F;18&#x2F;LLVM介绍及编译安装&#x2F;&quot;,&quot;title&quot;:&quot;LLVM介绍及编译安装&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>LLVM介绍及编译安装 | mingxingren的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">mingxingren的博客</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LLVM%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">LLVM介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LLVM%E9%A1%B9%E7%9B%AE%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2"><span class="nav-number">2.</span> <span class="nav-text">LLVM项目编译部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">参考：</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">mingxingren</p>
+  <div class="site-description" itemprop="description">挖一口自己的井</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/18/LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LLVM介绍及编译安装
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-07-18 23:51:00 / 修改时间：23:51:47" itemprop="dateCreated datePublished" datetime="2021-07-18T23:51:00+08:00">2021-07-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="LLVM介绍"><a href="#LLVM介绍" class="headerlink" title="LLVM介绍"></a>LLVM介绍</h2><p>LLVM的命名最早起源于底层语言虚拟机（Low Level Virtual Machine）的缩写 。它是一个用于建立编译器的基础框架，以C++编写。创建此工程的目的是对于任意汇编语言，利用该基础框架，构建一个包括编译时、链接时、执行时等的语言执行器。目前官方的LLVM只支持处理C/C++，Objective-C三种语言，当然的也有的一些非官方的扩展，使其支持ActionScript、Ada、D语言、Fortran、GLSL、HaskKell、Java bytecode、Objective-C、Python、Ruby、Rust、Scala以及C#。</p>
+<p>传统的静态编译器分为三个阶段：前端、中端（优化）、后端，LLVM 也不例外，只是 LLVM 实现了一种<strong>与源编程语言和目标机器架构无关的通用中间表示——LLVM IR</strong>， 这样如果支持一种新的编程语言只需重新实现一个前端，支持一种新的目标架构只需重新实现一个后端，前端和后端的链接枢纽就是<strong>LLVM IR</strong></p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071801.jpg" alt="image-01"></p>
+<h2 id="LLVM项目编译部署"><a href="#LLVM项目编译部署" class="headerlink" title="LLVM项目编译部署"></a>LLVM项目编译部署</h2><p>一开始我只是想使用 <strong>Clang</strong> 编译器，但是又不想直接通过 <strong>apt-get</strong> （Ubuntu 20.04）的方式安装，所以尝试编译项目源码。</p>
+<p>源码下载地址，这里我们直接选择 <a target="_blank" rel="noopener" href="https://github.com/llvm/llvm-project">llvm-project</a>，因为这个项目不经包含llvm项目还有包含其他子项目（clang也在其中）。再编译之前要确保系统已经下载一下 <code>gcc  g++  make  cmake  python3</code></p>
+<ul>
+<li><p>首先 <code>cd  llvm-project</code> </p>
+</li>
+<li><p>在当前目录执行 <code>cmake -S llvm -B build -G &lt;generator&gt; [options]</code>，</p>
+<p><code>generator</code> 选项如下：</p>
+<ul>
+<li><code>Ninja</code></li>
+<li><code>Unix Makefiles</code></li>
+<li><code>Visual Studio</code></li>
+<li><code>Xcode</code></li>
+</ul>
+<p>这里我们选择 <code>&quot;Unix Makefiles&quot;</code></p>
+<p>  比较常用的编译选项：</p>
+<ul>
+<li><code>-DLLVM_ENABLE_PROJECTS=&#39;...&#39;</code> 选择需要编译的子项目，例如：clang, clang-tools-extra, libcxx, libcxxabi, libunwind, lldb, compiler-rt, lld, polly, or cross-project-tests.</li>
+</ul>
+</li>
+<li><p><code>-DCMAKE_INSTALL_PREFIX=directory</code> 项目编译好后的下载目录，默认是 <code>/usr/local</code> </p>
+<ul>
+<li><code>-DCMAKE_BUILD_TYPE=type</code> 编译类型，例如  Debug, Release, RelWithDebInfo, MinSizeRel。默认是Debug模式</li>
+</ul>
+</li>
+<li><p><code>-DLLVM_ENABLE_ASSERTIONS=On</code> 编译是否断言检测（Debug模式下默认开启，其他编译默认关闭）</p>
+</li>
+</ul>
+<p>​    我在编译的时候，命令执行如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmake -S llvm -B build -G &quot;Unix Makefiles&quot; -DLLVM_ENABLE_PROJECTS=&quot;clang;clang-tools-extra;libcxx;libcxxabi;libunwind;lldb;compiler-rt;lld;polly&quot; -DCMAKE_INSTALL_PREFIX=&quot;/usr/local/llvm-tool&quot; -DCMAKE_BUILD_TYPE=&quot;Release&quot;</span><br><span class="line"></span><br><span class="line">cmake --build build</span><br></pre></td></tr></table></figure>
+
+<p>编译的时间非常漫长，我碰到过最长的编译时间了。看网上博客说有可能在编译的时候出现的内存不足的问题，如果你是用虚拟机进行编译可以扩大虚拟机内存。第一次编译的时候我遇到的一个 python 的模块缺失，下载补全模块就好。</p>
+<p>编译完成后，到 <code>llvm-project</code> 的 <code>build</code>目录，执行 <code>make install</code> 命令后，llvm 的相关工具便会部署到之前cmake 指定的目录了！</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p>① <a target="_blank" rel="noopener" href="http://www.nagain.com/activity/article/4/">http://www.nagain.com/activity/article/4/</a></p>
+<p>② <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102250532">https://zhuanlan.zhihu.com/p/102250532</a></p>
+<p>③ <a target="_blank" rel="noopener" href="https://github.com/llvm/llvm-project/blob/main/README.md">https://github.com/llvm/llvm-project/blob/main/README.md</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/LLVM/" rel="tag"># LLVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/14/WebAssembly%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" rel="prev" title="WebAssembly环境配置">
+                  <i class="fa fa-chevron-left"></i> WebAssembly环境配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mingxingren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
