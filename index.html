@@ -148,12 +148,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -182,6 +182,148 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/16/GLib&GTK3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/16/GLib&GTK3/" class="post-title-link" itemprop="url">GLib&GTK3</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-16 19:00:00" itemprop="dateCreated datePublished" datetime="2021-08-16T19:00:00+08:00">2021-08-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-08-06 19:00:37" itemprop="dateModified" datetime="2021-08-06T19:00:37+08:00">2021-08-06</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>该篇为我学习GLib 和 GTK 的笔记，只是记录一些知识点和写法，若碰巧浏览此篇，尽量不要以此篇为准！</p>
+</blockquote>
+<h2 id="GLib相关介绍"><a href="#GLib相关介绍" class="headerlink" title="GLib相关介绍"></a>GLib相关介绍</h2><h3 id="GObject"><a href="#GObject" class="headerlink" title="GObject"></a>GObject</h3><hr>
+<h4 id="GObject简单声明定义"><a href="#GObject简单声明定义" class="headerlink" title="GObject简单声明定义"></a>GObject简单声明定义</h4><p>GObject实现中， 类是两个结构体的组合，一个是<strong>实例结构体</strong>（保存所有对象私有数据），另一个是<strong>类结构体</strong>（保存所有对象共享的数据），其结构关系图如下：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021080601.png" alt="image-01"></p>
+<h4 id="GObject-构造和析构大致过程"><a href="#GObject-构造和析构大致过程" class="headerlink" title="GObject 构造和析构大致过程"></a>GObject 构造和析构大致过程</h4><p>构造过程：</p>
+<ul>
+<li>注册 <strong>GObject</strong> 类型到类型系统，此操作是在执行 <strong>main</strong> 函数之前，<strong>glib</strong>初始化过程中完成的</li>
+<li>分配内存给 <strong>GObjectClass</strong> 和 <strong>GObject  structure</strong></li>
+<li>初始化 <strong>GObjectClass</strong> 结构体内存，这块内存是对象的类（类似C++类中的函数和静态变量）</li>
+<li>初始化 <strong>GObject structure</strong> 内存， 这块内存属于实例</li>
+</ul>
+<p>注意：初始化流程是在第一次调用 <strong>g_object_new</strong> 函数时进行的。在第二次后续调用 <strong>g_object_new</strong>时，它只执行两步：</p>
+<p>① 给 <strong>GObject structure</strong> 分配内存</p>
+<p>② 初始化内存</p>
+<p>析构过程：销毁 <strong>GObject</strong> 实例，内存释放，但是不会销毁 <strong>GObjectClass</strong>，即使所有<strong>GObject</strong>实例被回收，<strong>GObjectClass</strong>仍然存在</p>
+<p>样例声明如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dlist.h 实现一个列表类</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;glib-object.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PM_TYPE_DLIST (pm_dlist_get_type())</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PMDListNode</span> <span class="title">PMDListNode</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span>  _<span class="title">PMDListNode</span> &#123;</span></span><br><span class="line">        PMDListNode *prev;</span><br><span class="line">        PMDListNode *next;</span><br><span class="line">        <span class="keyword">void</span> *data;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PMDList</span> <span class="title">PMDList</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span>  _<span class="title">PMDList</span> &#123;</span></span><br><span class="line">        GObject parent_instance;</span><br><span class="line">        PMDListNode *head;</span><br><span class="line">        PMDListNode *tail;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PMDListClass</span> <span class="title">PMDListClass</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">PMDListClass</span> &#123;</span></span><br><span class="line">        GObjectClass parent_class;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">GType <span class="title">pm_dlist_get_type</span> <span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dlist.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;dlist.h&quot;</span></span></span><br><span class="line"><span class="comment">// 对 pm_dlist_get_type 生成实现，返回类对象</span></span><br><span class="line"><span class="comment">// #arg_1: 类名 	#arg_2: 成员函数命名前缀	#arg_3: 父类型</span></span><br><span class="line">G_DEFINE_TYPE (PMDList, pm_dlist, G_TYPE_OBJECT);</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">pm_dlist_init</span> <span class="params">(PMDList *self)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        g_printf (<span class="string">&quot;\t实例结构体初始化！\n&quot;</span>);</span><br><span class="line">        self-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">        self-&gt;tail = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">pm_dlist_class_init</span> <span class="params">(PMDListClass *klass)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        g_printf (<span class="string">&quot;类结构体初始化!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>GObject具有功能：</p>
+<ul>
+<li><p>基于引用计数的内存管理 —— 结合 <strong>g_object_ref</strong> 和 <strong>g_object_unref</strong> 两个函数对引用计数进行加减</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> g_object_ref(Obj) ((glib_typeof (Obj)) (g_object_ref) (Obj))</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">g_object_unref</span> <span class="params">(gpointer object)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li><p>对象的构造函数与析构函数</p>
+</li>
+<li><p>可设置对象属性的 set/get 函数</p>
+</li>
+<li><p>易于使用的信号机制</p>
+</li>
+</ul>
+<p>继承GObject基类的实例化代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PMDList *dlist; <span class="comment">/* 类的实例化，产生对象 */</span></span><br><span class="line">dlist = g_object_new (PM_TYPE_DLIST, <span class="literal">NULL</span>); <span class="comment">/* 创建对象的一个实例 并将其引用计数 +1 */</span></span><br><span class="line">g_object_unref (dlist); <span class="comment">/* 将对象的实例引用计数 -1，并检测对象的实例的引用计数是否为 0，若为 0，那么便释放对象的实例的存储空间。 */</span></span><br><span class="line">dlist = g_object_new (PM_TYPE_DLIST, <span class="literal">NULL</span>); <span class="comment">/* 再创建对象的一个实例 */</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>GObject子类化完整的过程：</p>
+<blockquote>
+<p>① 在 .h 文件中包含 glib-object.h；<br>② 在 .h 文件中构建实例结构体与类结构体，并分别将 GObject 类的实例结构体与类结构体置于成员之首；<br>③ 在 .h 文件中定义 P_TYPE_T 宏，并声明 p_t_get_type 函数；<br>④ 在 .c 文件中调用 G_DEFINE_TYPE 宏产生类型注册代码。</p>
+</blockquote>
+<p>声明的简单范例，参考地址： <a target="_blank" rel="noopener" href="https://blog.csdn.net/knowledgebao/article/details/82418046">https://blog.csdn.net/knowledgebao/article/details/82418046</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec2.md">https://github.com/ToshioCP/Gobject-tutorial/blob/main/gfm/sec2.md</a></p>
+<h4 id="GObject-设置属性"><a href="#GObject-设置属性" class="headerlink" title="GObject 设置属性"></a>GObject 设置属性</h4><h4 id="GObject-的继承"><a href="#GObject-的继承" class="headerlink" title="GObject 的继承"></a>GObject 的继承</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kb-Son.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;kb-Parent.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KbSon</span> <span class="title">KbSon</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">KbSon</span> &#123;</span></span><br><span class="line">        KbParent parent;	<span class="comment">// 继承父实例属性</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KbSonClass</span> <span class="title">KbSonClass</span>;</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">KParentClass</span> &#123;</span></span><br><span class="line">        KbParentClass parent_class;	<span class="comment">// 继承父类属性</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kb-Son.c</span></span><br><span class="line">...</span><br><span class="line">G_DEFINE_TYPE(KbSon, kb_son, KB_TYPE_Parent);	<span class="comment">// GType 设置成父类 其他代码一样</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>继承常用的宏（其中P表示项目名称     T表示类名称    PTPrivate表示私有数据结构体）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_TYPE_T (p_t_get_type())	<span class="comment">// 仅在使用 g_object_new 进行对象实例化的时候使用一次，用于向 GObject 库的类型系统注册 PT 类</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_T(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), P_TYPE_T, PT))	<span class="comment">// 用于将 obj 对象的类型强制转换为 P_T 类的实例结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_IS_T(obj) G_TYPE_CHECK_INSTANCE_TYPE((obj), P_TYPE_T)) <span class="comment">// 用于判断 obj 对象的类型是否为 P_T 类的实例结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_T_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), P_TYPE_T, PTClass))<span class="comment">// 用于将 kclass 类结构体得类型强制转换为 P_T 类的类结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_IS_T_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), P_TYPE_T))	<span class="comment">// 用于判断 klass 类结构体的类型是否为 P_T 类的类结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_T_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), P_TYPE_T, PTClass))	<span class="comment">// 获取 obj 对象对应的类结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_T_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), P_TYPE_T, PTPrivate))	<span class="comment">// 获取 obj 对象对应的私有数据</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>接口常用的宏（其中 P 表示项目名称    T表示类名称    I是接口的缩写）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_TYPE_IT (p_t_get_type())	<span class="comment">// 仅在接口实现时使用一次，用于向 GObject 库的类型系统注册 PIT 接口</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_IT(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), P_TYPE_IT, P_IT))	<span class="comment">// 用于将 obj 对象的类型强制转换为 P_IT 接口的实例结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_IS_IT(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), P_TYPE_IT))	<span class="comment">// 用于判断 obj 对象是否为 P_IT接口的实例结构体类型</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> P_IT_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), P_TYPE_IT, P_IT))	<span class="comment">// 获取 obj 对象对应的 P_IT 接口的类结构体类型</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="GObject-的信号使用"><a href="#GObject-的信号使用" class="headerlink" title="GObject 的信号使用"></a>GObject 的信号使用</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新建信号</span></span><br><span class="line"><span class="function">guint <span class="title">g_signal_new</span> <span class="params">(<span class="keyword">const</span> gchar		*signal_name,</span></span></span><br><span class="line"><span class="params"><span class="function">                    GType				   itype,</span></span></span><br><span class="line"><span class="params"><span class="function">                    GSignalFlags	signal_flags,</span></span></span><br><span class="line"><span class="params"><span class="function">                    guint           class_offset,</span></span></span><br><span class="line"><span class="params"><span class="function">                    GSignalAccumulator	 		accumulator,</span></span></span><br><span class="line"><span class="params"><span class="function">                    gpointer		 			accu_data,</span></span></span><br><span class="line"><span class="params"><span class="function">                    GSignalCMarshaller  		c_marshaller,</span></span></span><br><span class="line"><span class="params"><span class="function">                    GType               		return_type,</span></span></span><br><span class="line"><span class="params"><span class="function">                    guint               		n_params,</span></span></span><br><span class="line"><span class="params"><span class="function">                    ...)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 连接信号和回调函数</span></span><br><span class="line"><span class="function">gulong <span class="title">g_signal_connect_data</span> <span class="params">(gpointer	instance, <span class="keyword">const</span> gchar	*detailed_signal,</span></span></span><br><span class="line"><span class="params"><span class="function">                              GCallback	  			c_handler,</span></span></span><br><span class="line"><span class="params"><span class="function">                              gpointer		  			 data,</span></span></span><br><span class="line"><span class="params"><span class="function">                              GClosureNotify	 destroy_data,</span></span></span><br><span class="line"><span class="params"><span class="function">                              GConnectFlags	  	 connect_flags)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发射信号</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">g_signal_emit_by_name</span> <span class="params">(gpointer	instance, <span class="keyword">const</span> gchar	*detailed_signal, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="GTK"><a href="#GTK" class="headerlink" title="GTK"></a>GTK</h2><p><strong>GtkApplication</strong></p>
+<p>用于处理GTK+初始化、应用程序唯一性、会话管理，通过导出操作和菜单提供一些基本的脚本能力和桌面shell集成，并管理一个顶级窗口列表，其生命周期自动绑定到应用程序的生命周期。</p>
+<p><strong>GtkWindow</strong></p>
+<p>一个 <strong>GtkWindow</strong> 是一个可以包含其他控件的顶级窗口，窗口通常在桌面系统下具有样式。并且允许用户放缩、移动或者关闭窗体等操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 显示窗体</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">gtk_window_present</span> <span class="params">(GtkWindow* window)</span></span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
