@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title></title>
+    <title>C/C++的编程问题</title>
     <url>/2021/08/19/C%E5%92%8CC++%E7%9A%84%E7%BC%96%E7%A8%8B%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<ol>
 <li>宏定义 ’**#<strong>‘ 和 ’</strong>##<strong>‘ 的使用说明: ‘</strong>#<strong>‘ 用于将代码转换成字符串; ‘</strong>##**’ 用于拼接代码; 使用范例:</li>
@@ -42,9 +42,12 @@
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// b.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">object</span>;</span></span><br><span class="line"><span class="keyword">typedef</span> object defMyObject;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">myStruct</span>;</span></span><br><span class="line"><span class="keyword">typedef</span> myStruct defMyStruct;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <tags>
+        <tag>C/C++</tag>
+      </tags>
   </entry>
   <entry>
-    <title>GLib&amp;GTK3</title>
+    <title>GLib和GTK3</title>
     <url>/2021/08/06/GLib%20and%20GTK3/</url>
     <content><![CDATA[<blockquote>
 <p>该篇为我学习GLib 和 GTK 的笔记，只是记录一些知识点和写法，若碰巧浏览此篇，尽量不要以此篇为准！</p>
