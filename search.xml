@@ -59,6 +59,18 @@
 <ol start="8">
 <li><strong>虽然C++的编译器对变量有默认的初始化（默认都是初始化0），但是在声明变量的时候一定要显式地赋值，这并不代表不赋值会造成编译或者运行错误，而是这是一个良好的习惯，帮助你注意到每一个变量，注意结构体中每一个成员变量！！！</strong></li>
 </ol>
+<ol start="9">
+<li><code>lambda</code>按值默认捕获 <code>[=]</code> 变量捕获只能针对于在创建<code>lambda</code>式的作用域内可见的非静态局部变量（包括形参）；静态变量对与lambda本身就是不用捕获就可以访问，所以如果只是想捕获其当前值，需要明确写出拷贝并且按值捕获这个拷贝，代码如下：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// C++11</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> g_state = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">auto</span> iState = g_state;</span><br><span class="line">filters.<span class="built_in">emplace_back</span>([iState](<span class="keyword">int</span> value) &#123;</span><br><span class="line">    <span class="keyword">return</span> value % g_state;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// C++14 起的写法</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> g_state = <span class="number">1</span>;</span><br><span class="line">filters.<span class="built_in">emplace_back</span>([g_state = g_state](<span class="keyword">int</span> value) &#123;</span><br><span class="line">    <span class="keyword">return</span> value % g_state;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="10">
+<li><code>lambda</code> 使用初始化捕获将对象移入闭包</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// C++11 此处将局部变量使用移动构造，移入到匿名函数中，节省了拷贝开销, 实际上 C++14 中lambda可以全面替代std::bind</span></span><br><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; data = &#123; ... &#125;;</span><br><span class="line"><span class="keyword">auto</span> func = std::<span class="built_in">bind</span>([](<span class="keyword">const</span> std::vector&lt;<span class="keyword">int</span>&gt;&amp; data) &#123; ... &#125;, std::<span class="built_in">move</span>(data));</span><br><span class="line"></span><br><span class="line"><span class="comment">// C++14起</span></span><br><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; data = &#123; ... &#125;;</span><br><span class="line"><span class="keyword">auto</span> func = [data = std::<span class="built_in">move</span>(data)]() &#123;</span><br><span class="line">        ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <tags>
         <tag>C/C++</tag>
