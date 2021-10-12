@@ -150,12 +150,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -184,6 +184,231 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar01.png">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">rust知识整理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-10-12 11:07:00 / 修改时间：11:07:25" itemprop="dateCreated datePublished" datetime="2021-10-12T11:07:00+08:00">2021-10-12</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li>Rust 的克隆与复制</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/21730929">https://zhuanlan.zhihu.com/p/21730929</a></p>
+<ol start="2">
+<li><p>Rust 提供了分层式处理错误方案：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Option</span>&lt;T&gt;: 用于处理有值和无值的情况</span><br><span class="line"><span class="built_in">Result</span>&lt;T, E&gt;: 用于处理可恢复错误的情况</span><br><span class="line">Panic: 用于处理不可恢复错误的情况</span><br><span class="line">Abort: 用于处理会发生灾难性后果的情况</span><br></pre></td></tr></table></figure></li>
+<li><p>生命周期注解位于引用的 <strong>&amp;</strong> 操作符之后，并用一个空格将生命周期注解与引用类型分隔开，比如 <strong>&amp; ‘a i32</strong>  、 <strong>&amp;’a mut i32</strong>、**&amp;’a str** 。生周期注解并不改变任何引用的生命周期的大小，只用于描述多个生命周期间的关系。</p>
+</li>
+</ol>
+<ol start="4">
+<li><p><strong>async</strong> 关键字作用:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 1. 允许函数体内使用 .await 语法</span><br><span class="line">// 2. 修改函数的返回类型。 async fn foo() -&gt; Bar 实际上返回的是 impl std::future::Future&lt;Output=Bar&gt;</span><br><span class="line">// 3. 自动将返回值封装进一个新的 future 对象</span><br></pre></td></tr></table></figure>
+
+<p><strong>.await</strong> 语法的作用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">   </span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="5">
+<li> <strong>C/CPP Type to Rust</strong></li>
+</ol>
+<p>   参考：<a target="_blank" rel="noopener" href="https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/types.html">https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/types.html</a></p>
+<table>
+<thead>
+<tr>
+<th align="center">C/C++</th>
+<th align="center">Rust</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">char</td>
+<td align="center">i8(or u8)</td>
+</tr>
+<tr>
+<td align="center">unsigned char</td>
+<td align="center">u8</td>
+</tr>
+<tr>
+<td align="center">signed char</td>
+<td align="center">i8</td>
+</tr>
+<tr>
+<td align="center">short int</td>
+<td align="center">i16</td>
+</tr>
+<tr>
+<td align="center">unsigned short int</td>
+<td align="center">u16</td>
+</tr>
+<tr>
+<td align="center">(signed)  int</td>
+<td align="center">i32 or i16</td>
+</tr>
+<tr>
+<td align="center">unsigned int</td>
+<td align="center">u32 or u16</td>
+</tr>
+<tr>
+<td align="center">(signed) long int</td>
+<td align="center">i32<code>or</code>i64</td>
+</tr>
+<tr>
+<td align="center">unsigned long int</td>
+<td align="center">u32<code>or</code>u64</td>
+</tr>
+<tr>
+<td align="center">(signed) long long int</td>
+<td align="center">i64</td>
+</tr>
+<tr>
+<td align="center">size_t</td>
+<td align="center">usize</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">f32</td>
+</tr>
+<tr>
+<td align="center">double</td>
+<td align="center">f64</td>
+</tr>
+<tr>
+<td align="center">long double</td>
+<td align="center">f128<br />(Rust 在有些平台上不支持该类型)</td>
+</tr>
+<tr>
+<td align="center">bool</td>
+<td align="center">bool</td>
+</tr>
+<tr>
+<td align="center">void</td>
+<td align="center">()</td>
+</tr>
+</tbody></table>
+<p>   C 的 <code>&lt;stdin.h&gt;</code>  头文件提供具有长度签名的类型别名（推荐使用）</p>
+<table>
+<thead>
+<tr>
+<th align="center">C/CPP</th>
+<th align="center">Rust</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">int8_t</td>
+<td align="center">i8</td>
+</tr>
+<tr>
+<td align="center">uint8_t</td>
+<td align="center">u8</td>
+</tr>
+<tr>
+<td align="center">int16_t</td>
+<td align="center">i16</td>
+</tr>
+<tr>
+<td align="center">uint16_t</td>
+<td align="center">u16</td>
+</tr>
+<tr>
+<td align="center">int32_t</td>
+<td align="center">i32</td>
+</tr>
+<tr>
+<td align="center">uint32_t</td>
+<td align="center">u32</td>
+</tr>
+<tr>
+<td align="center">int64_t</td>
+<td align="center">i64</td>
+</tr>
+<tr>
+<td align="center">uint64_t</td>
+<td align="center">u64</td>
+</tr>
+</tbody></table>
+<p>   Rust FFI编程——手动绑定C库</p>
+<p>   <a target="_blank" rel="noopener" href="https://rustcc.cn/article?id=f70a81d1-cb79-4429-985c-d3d53247f5c0">https://rustcc.cn/article?id=f70a81d1-cb79-4429-985c-d3d53247f5c0</a></p>
+<ol start="6">
+<li><strong>rust 指针转换</strong></li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Rust *mut u8 转换成 &amp;[u8]</span></span><br><span class="line"><span class="keyword">unsafe</span> &#123;</span><br><span class="line">    <span class="comment">// data_ptr为 *mut u8, data为 &amp;[u8]</span></span><br><span class="line">    <span class="comment">// 使用 slice::from_raw_parts 不会发生拷贝，作用给这块内存创建一个切片</span></span><br><span class="line">    <span class="keyword">let</span> data = slice::from_raw_parts(data_ptr, size);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Rust *mut u8 转换成 &amp;mut [u8]</span></span><br><span class="line"><span class="keyword">unsafe</span> &#123;</span><br><span class="line">    <span class="comment">// data_ptr为 *mut u8, data为 Vec[u8]</span></span><br><span class="line">    <span class="comment">// 使用 Vec::from_raw_parts 不会发生拷贝，该块内存的所有权会被 data 接管</span></span><br><span class="line">    <span class="keyword">let</span> data = <span class="built_in">Vec</span>::from_raw_parts(data_ptr, size, size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>7.原始指针</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &amp;<span class="number">56</span>;</span><br><span class="line"><span class="keyword">let</span> a_raw_ptr = a <span class="keyword">as</span> *<span class="keyword">const</span> <span class="built_in">u32</span>;</span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="keyword">let</span> b = &amp;<span class="keyword">mut</span> <span class="number">5634.3</span>;</span><br><span class="line"><span class="keyword">let</span> b_mut_ptr = b <span class="keyword">as</span> *<span class="keyword">mut</span> T;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>8.rust 智能指针</p>
+<blockquote>
+<ul>
+<li>独占式智能指针 <code>Box&lt;T&gt;</code></li>
+<li>非线程安全的引用计数智能指针 <code>Rc&lt;T&gt;</code></li>
+<li>线程安全的引用计数智能指针 <code>Arc&lt;T&gt;</code></li>
+<li>弱指针 <code>Weak&lt;T&gt;</code></li>
+</ul>
+</blockquote>
+<ol start="9">
+<li>rust <strong>async/await</strong>作用理解： <strong>async</strong> 关键字将一个代码块转为为实现了<strong>future</strong>特征的状态机，使得在同步方法中调用阻塞函数（<strong>async</strong>转化的函数会阻塞整个线程），但是阻塞的<strong>future</strong>会让出线程控制权，允许其他<strong>future</strong>运行；而<strong>await</strong>关键字可以使<strong>async</strong>代码块中的其他<strong>async</strong>函数按顺序执行，当<strong>await</strong>发生阻塞时，不会阻塞当前线程，可以让其他任务执行。</li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144325440">https://zhuanlan.zhihu.com/p/144325440</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

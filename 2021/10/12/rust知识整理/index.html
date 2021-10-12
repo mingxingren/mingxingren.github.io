@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.5.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:-1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Rust 的克隆与复制  https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;21730929  Rust 提供了分层式处理错误方案： 1234Option&lt;T&gt;: 用于处理有值和无值的情况Result&lt;T, E&gt;: 用于处理可恢复错误的情况Panic: 用于处理不可恢复错误的情况Abort: 用于处理会发生灾难性后果的情况 生命周期注解位于引用的 &amp; 操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rust知识整理">
+<meta property="og:url" content="http://example.com/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="mingxingren的博客">
+<meta property="og:description" content="Rust 的克隆与复制  https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;21730929  Rust 提供了分层式处理错误方案： 1234Option&lt;T&gt;: 用于处理有值和无值的情况Result&lt;T, E&gt;: 用于处理可恢复错误的情况Panic: 用于处理不可恢复错误的情况Abort: 用于处理会发生灾难性后果的情况 生命周期注解位于引用的 &amp; 操作">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-10-12T03:07:00.000Z">
+<meta property="article:modified_time" content="2021-10-12T03:07:25.057Z">
+<meta property="article:author" content="mingxingren">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-Hans&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;2021&#x2F;10&#x2F;12&#x2F;rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86&#x2F;&quot;,&quot;path&quot;:&quot;2021&#x2F;10&#x2F;12&#x2F;rust知识整理&#x2F;&quot;,&quot;title&quot;:&quot;rust知识整理&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>rust知识整理 | mingxingren的博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">mingxingren的博客</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="mingxingren"
+      src="/images/avatar01.png">
+  <p class="site-author-name" itemprop="name">mingxingren</p>
+  <div class="site-description" itemprop="description">挖一口自己的井</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar01.png">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          rust知识整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-10-12 11:07:00 / 修改时间：11:07:25" itemprop="dateCreated datePublished" datetime="2021-10-12T11:07:00+08:00">2021-10-12</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol>
+<li>Rust 的克隆与复制</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/21730929">https://zhuanlan.zhihu.com/p/21730929</a></p>
+<ol start="2">
+<li><p>Rust 提供了分层式处理错误方案：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Option</span>&lt;T&gt;: 用于处理有值和无值的情况</span><br><span class="line"><span class="built_in">Result</span>&lt;T, E&gt;: 用于处理可恢复错误的情况</span><br><span class="line">Panic: 用于处理不可恢复错误的情况</span><br><span class="line">Abort: 用于处理会发生灾难性后果的情况</span><br></pre></td></tr></table></figure></li>
+<li><p>生命周期注解位于引用的 <strong>&amp;</strong> 操作符之后，并用一个空格将生命周期注解与引用类型分隔开，比如 <strong>&amp; ‘a i32</strong>  、 <strong>&amp;’a mut i32</strong>、**&amp;’a str** 。生周期注解并不改变任何引用的生命周期的大小，只用于描述多个生命周期间的关系。</p>
+</li>
+</ol>
+<ol start="4">
+<li><p><strong>async</strong> 关键字作用:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 1. 允许函数体内使用 .await 语法</span><br><span class="line">// 2. 修改函数的返回类型。 async fn foo() -&gt; Bar 实际上返回的是 impl std::future::Future&lt;Output=Bar&gt;</span><br><span class="line">// 3. 自动将返回值封装进一个新的 future 对象</span><br></pre></td></tr></table></figure>
+
+<p><strong>.await</strong> 语法的作用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">   </span><br></pre></td></tr></table></figure></li>
+</ol>
+<ol start="5">
+<li> <strong>C/CPP Type to Rust</strong></li>
+</ol>
+<p>   参考：<a target="_blank" rel="noopener" href="https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/types.html">https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/features_of_rust/types.html</a></p>
+<table>
+<thead>
+<tr>
+<th align="center">C/C++</th>
+<th align="center">Rust</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">char</td>
+<td align="center">i8(or u8)</td>
+</tr>
+<tr>
+<td align="center">unsigned char</td>
+<td align="center">u8</td>
+</tr>
+<tr>
+<td align="center">signed char</td>
+<td align="center">i8</td>
+</tr>
+<tr>
+<td align="center">short int</td>
+<td align="center">i16</td>
+</tr>
+<tr>
+<td align="center">unsigned short int</td>
+<td align="center">u16</td>
+</tr>
+<tr>
+<td align="center">(signed)  int</td>
+<td align="center">i32 or i16</td>
+</tr>
+<tr>
+<td align="center">unsigned int</td>
+<td align="center">u32 or u16</td>
+</tr>
+<tr>
+<td align="center">(signed) long int</td>
+<td align="center">i32<code>or</code>i64</td>
+</tr>
+<tr>
+<td align="center">unsigned long int</td>
+<td align="center">u32<code>or</code>u64</td>
+</tr>
+<tr>
+<td align="center">(signed) long long int</td>
+<td align="center">i64</td>
+</tr>
+<tr>
+<td align="center">size_t</td>
+<td align="center">usize</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">f32</td>
+</tr>
+<tr>
+<td align="center">double</td>
+<td align="center">f64</td>
+</tr>
+<tr>
+<td align="center">long double</td>
+<td align="center">f128<br />(Rust 在有些平台上不支持该类型)</td>
+</tr>
+<tr>
+<td align="center">bool</td>
+<td align="center">bool</td>
+</tr>
+<tr>
+<td align="center">void</td>
+<td align="center">()</td>
+</tr>
+</tbody></table>
+<p>   C 的 <code>&lt;stdin.h&gt;</code>  头文件提供具有长度签名的类型别名（推荐使用）</p>
+<table>
+<thead>
+<tr>
+<th align="center">C/CPP</th>
+<th align="center">Rust</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">int8_t</td>
+<td align="center">i8</td>
+</tr>
+<tr>
+<td align="center">uint8_t</td>
+<td align="center">u8</td>
+</tr>
+<tr>
+<td align="center">int16_t</td>
+<td align="center">i16</td>
+</tr>
+<tr>
+<td align="center">uint16_t</td>
+<td align="center">u16</td>
+</tr>
+<tr>
+<td align="center">int32_t</td>
+<td align="center">i32</td>
+</tr>
+<tr>
+<td align="center">uint32_t</td>
+<td align="center">u32</td>
+</tr>
+<tr>
+<td align="center">int64_t</td>
+<td align="center">i64</td>
+</tr>
+<tr>
+<td align="center">uint64_t</td>
+<td align="center">u64</td>
+</tr>
+</tbody></table>
+<p>   Rust FFI编程——手动绑定C库</p>
+<p>   <a target="_blank" rel="noopener" href="https://rustcc.cn/article?id=f70a81d1-cb79-4429-985c-d3d53247f5c0">https://rustcc.cn/article?id=f70a81d1-cb79-4429-985c-d3d53247f5c0</a></p>
+<ol start="6">
+<li><strong>rust 指针转换</strong></li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Rust *mut u8 转换成 &amp;[u8]</span></span><br><span class="line"><span class="keyword">unsafe</span> &#123;</span><br><span class="line">    <span class="comment">// data_ptr为 *mut u8, data为 &amp;[u8]</span></span><br><span class="line">    <span class="comment">// 使用 slice::from_raw_parts 不会发生拷贝，作用给这块内存创建一个切片</span></span><br><span class="line">    <span class="keyword">let</span> data = slice::from_raw_parts(data_ptr, size);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Rust *mut u8 转换成 &amp;mut [u8]</span></span><br><span class="line"><span class="keyword">unsafe</span> &#123;</span><br><span class="line">    <span class="comment">// data_ptr为 *mut u8, data为 Vec[u8]</span></span><br><span class="line">    <span class="comment">// 使用 Vec::from_raw_parts 不会发生拷贝，该块内存的所有权会被 data 接管</span></span><br><span class="line">    <span class="keyword">let</span> data = <span class="built_in">Vec</span>::from_raw_parts(data_ptr, size, size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>7.原始指针</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &amp;<span class="number">56</span>;</span><br><span class="line"><span class="keyword">let</span> a_raw_ptr = a <span class="keyword">as</span> *<span class="keyword">const</span> <span class="built_in">u32</span>;</span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"><span class="keyword">let</span> b = &amp;<span class="keyword">mut</span> <span class="number">5634.3</span>;</span><br><span class="line"><span class="keyword">let</span> b_mut_ptr = b <span class="keyword">as</span> *<span class="keyword">mut</span> T;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>8.rust 智能指针</p>
+<blockquote>
+<ul>
+<li>独占式智能指针 <code>Box&lt;T&gt;</code></li>
+<li>非线程安全的引用计数智能指针 <code>Rc&lt;T&gt;</code></li>
+<li>线程安全的引用计数智能指针 <code>Arc&lt;T&gt;</code></li>
+<li>弱指针 <code>Weak&lt;T&gt;</code></li>
+</ul>
+</blockquote>
+<ol start="9">
+<li>rust <strong>async/await</strong>作用理解： <strong>async</strong> 关键字将一个代码块转为为实现了<strong>future</strong>特征的状态机，使得在同步方法中调用阻塞函数（<strong>async</strong>转化的函数会阻塞整个线程），但是阻塞的<strong>future</strong>会让出线程控制权，允许其他<strong>future</strong>运行；而<strong>await</strong>关键字可以使<strong>async</strong>代码块中的其他<strong>async</strong>函数按顺序执行，当<strong>await</strong>发生阻塞时，不会阻塞当前线程，可以让其他任务执行。</li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144325440">https://zhuanlan.zhihu.com/p/144325440</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Rust/" rel="tag"># Rust</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/19/C%E5%92%8CC++%E7%9A%84%E7%BC%96%E7%A8%8B%E9%97%AE%E9%A2%98/" rel="prev" title="C/C++的编程问题">
+                  <i class="fa fa-chevron-left"></i> C/C++的编程问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">mingxingren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
