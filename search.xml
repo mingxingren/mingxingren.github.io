@@ -1009,4 +1009,38 @@
         <tag>C/C++ imgui</tag>
       </tags>
   </entry>
+  <entry>
+    <title>OpenGL知识整理</title>
+    <url>/2021/12/22/opengl%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<h4 id="winit-——-跨平台的窗口创建和管理"><a href="#winit-——-跨平台的窗口创建和管理" class="headerlink" title="winit —— 跨平台的窗口创建和管理"></a>winit —— 跨平台的窗口创建和管理</h4><p>glutin使用流程</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">start=&gt;start: 开始</span><br><span class="line">op1=&gt;operation: 申请事件循环 EventLoop</span><br><span class="line">op2=&gt;operation: 创建窗口资源 WindowedContext</span><br><span class="line">op3=&gt;operation: 加载shader文件</span><br><span class="line">op4=&gt;operation: 调用 glCreateProgram 创建着色器程序容器</span><br><span class="line">end=&gt;end: 处理结束</span><br><span class="line"></span><br><span class="line">start-&gt;op1-&gt;op2-&gt;op3-&gt;op4-&gt;end</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Opengl-Sharders（着色器）"><a href="#Opengl-Sharders（着色器）" class="headerlink" title="Opengl Sharders（着色器）"></a>Opengl Sharders（着色器）</h4><h5 id="顶点着色器的坐标系统"><a href="#顶点着色器的坐标系统" class="headerlink" title="顶点着色器的坐标系统"></a>顶点着色器的坐标系统</h5><p>顶点着色器的坐标很有意思,  它使用 -1 和 1表示坐标系轴方向上的负边界和正边界.  仔细想想确实应该如此，假使我们想渲染的一块区域的大小是 10x10大小的矩形，那么边界就是 -5 ~ 5，当区域是20x20时，边界便改为 -10~10. 我猜如果以确定边界绘制左边代码便不具有普适性，这个矩形尺寸调整一下，那个矩形尺寸调整一下. 所以统一用 -1 和 1表示边界值, 中间值乘以系数表示其他坐标点，这样就不用受到渲染矩形区域大小的影响.</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021120501.png" alt="image-01"></p>
+<p>着色器（<strong>Shader</strong>）是运行在GPU上的小程序，这些小程序为图形渲染管线的某个特定部分而运行。使用一种叫 <strong>GLSL</strong> 的类C语言写成，一个典型的着色器有下面的结构</p>
+<figure class="highlight glsl"><table><tr><td class="code"><pre><span class="line"><span class="meta">#version version_number</span></span><br><span class="line"><span class="keyword">in</span> type in_variable_name;</span><br><span class="line"><span class="keyword">in</span> type in_variable_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> type out_variable_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> type uniform_name;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> main()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 处理输入并进行一些图形操作</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// 输出处理过的结果到输出变量</span></span><br><span class="line">  out_variable_name = weird_stuff_we_processed;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="opengl相关库"><a href="#opengl相关库" class="headerlink" title="opengl相关库:"></a>opengl相关库:</h4><p>① glfw：负责创建窗口，上下文，纹理，输入输出、处理消息循环</p>
+<p>② glew：用于加载 opengl 相关库加载</p>
+<h4 id="opengl-参考资料"><a href="#opengl-参考资料" class="headerlink" title="opengl 参考资料"></a>opengl 参考资料</h4><p><a href="https://antongerdelan.net/opengl/index.html#onlinetuts">https://antongerdelan.net/opengl/index.html#onlinetuts</a></p>
+<h3 id="双缓冲"><a href="#双缓冲" class="headerlink" title="双缓冲"></a>双缓冲</h3><p>应用程序使用单缓冲绘图时可能会存在图像闪烁的问题。 这是因为生成的图像不是一下子被绘制出来的，而是按照从左到右，由上而下逐像素地绘制而成的。最终图像不是在瞬间显示给用户，而是通过一步一步生成的，这会导致渲染的结果很不真实。为了规避这些问题，我们应用双缓冲渲染窗口应用程序。<strong>前</strong>缓冲保存着最终输出的图像，它会在屏幕上显示；而所有的的渲染指令都会在<strong>后</strong>缓冲上绘制。当所有的渲染指令执行完毕后，我们<strong>交换</strong>(Swap)前缓冲和后缓冲，这样图像就立即呈显出来，之前提到的不真实感就消除了。</p>
+<h3 id="OpenGL-调用流程"><a href="#OpenGL-调用流程" class="headerlink" title="OpenGL 调用流程"></a>OpenGL 调用流程</h3><ol>
+<li>着色器创建流程</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">start=&gt;start: Start</span><br><span class="line">op_1=&gt;operation: glCreateShader 创建着器句柄</span><br><span class="line">op_2=&gt;operation: glShaderSource 加载着色器脚本</span><br><span class="line">op_3=&gt;operation: glCompileShader 编译着色器脚本</span><br><span class="line">op_4=&gt;operation: glGetShaderiv 判断着色器编译结果是否成功</span><br><span class="line">op_5=&gt;operation: glGetShaderInfoLog 获取着色器信息日志</span><br><span class="line">cond=&gt;condition: 是否成功</span><br><span class="line">end=&gt;end</span><br><span class="line">start-&gt;op_1-&gt;op_2-&gt;op_3-&gt;op_4-&gt;cond</span><br><span class="line">cond(yes)-&gt;end</span><br><span class="line">cond(no)-&gt;op_5-&gt;end</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>创建 OpenGL 工程对象</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">st=&gt;start: Start</span><br><span class="line">op_1=&gt;operation: glCreateProgram 创建工程对象</span><br><span class="line">op_2=&gt;operation: glAttachShader 加载顶点着色器,片段着色器</span><br><span class="line">op_3=&gt;operation: glLinkProgram 构建工程</span><br><span class="line">op_4=&gt;operation: glGetProgramiv 获取工程构建状态</span><br><span class="line">op_5=&gt;operation: glDeleteShader 删除着色器</span><br><span class="line">op_6=&gt;operation: glGetProgramInfoLog 获取工程日志</span><br><span class="line">cond=&gt;condition: 是否成功</span><br><span class="line">e=&gt;end</span><br><span class="line">st-&gt;op_1-&gt;op_2-&gt;op_3-&gt;op_4-&gt;cond</span><br><span class="line">cond(yes)-&gt;op_5-&gt;e</span><br><span class="line">cond(no)-&gt;op_6-&gt;e</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>OpenGL</tag>
+      </tags>
+  </entry>
 </search>
