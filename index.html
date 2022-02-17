@@ -224,7 +224,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-24 09:26:16" itemprop="dateModified" datetime="2021-12-24T09:26:16+08:00">2021-12-24</time>
+        <time title="修改时间：2022-02-17 10:16:07" itemprop="dateModified" datetime="2022-02-17T10:16:07+08:00">2022-02-17</time>
       </span>
 
   
@@ -237,58 +237,49 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h4 id="winit-——-跨平台的窗口创建和管理"><a href="#winit-——-跨平台的窗口创建和管理" class="headerlink" title="winit —— 跨平台的窗口创建和管理"></a>winit —— 跨平台的窗口创建和管理</h4><p>glutin使用流程</p>
-<div id="flowchart-0" class="flow-chart"></div>
-
-
-
-<h4 id="Opengl-Sharders（着色器）"><a href="#Opengl-Sharders（着色器）" class="headerlink" title="Opengl Sharders（着色器）"></a>Opengl Sharders（着色器）</h4><h5 id="顶点着色器的坐标系统"><a href="#顶点着色器的坐标系统" class="headerlink" title="顶点着色器的坐标系统"></a>顶点着色器的坐标系统</h5><p>顶点着色器的坐标很有意思,  它使用 -1 和 1表示坐标系轴方向上的负边界和正边界.  仔细想想确实应该如此，假使我们想渲染的一块区域的大小是 10x10大小的矩形，那么边界就是 -5 ~ 5，当区域是20x20时，边界便改为 -10~10. 我猜如果以确定边界绘制左边代码便不具有普适性，这个矩形尺寸调整一下，那个矩形尺寸调整一下. 所以统一用 -1 和 1表示边界值, 中间值乘以系数表示其他坐标点，这样就不用受到渲染矩形区域大小的影响.</p>
+          <h2 id="OpenGL-Sharders（着色器）"><a href="#OpenGL-Sharders（着色器）" class="headerlink" title="OpenGL Sharders（着色器）"></a>OpenGL Sharders（着色器）</h2><h3 id="GPU显示数据流程"><a href="#GPU显示数据流程" class="headerlink" title="GPU显示数据流程"></a>GPU显示数据流程</h3><p><img src="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021123001.png" alt="image-01"></p>
+<h3 id="顶点着色器的坐标系统"><a href="#顶点着色器的坐标系统" class="headerlink" title="顶点着色器的坐标系统"></a>顶点着色器的坐标系统</h3><p>顶点着色器的坐标很有意思,  它使用 -1 和 1表示坐标系轴方向上的负边界和正边界.  仔细想想确实应该如此，假使我们想渲染的一块区域的大小是 10x10大小的矩形，那么边界就是 -5 ~ 5，当区域是20x20时，边界便改为 -10~10. 我猜如果以确定边界绘制左边代码便不具有普适性，这个矩形尺寸调整一下，那个矩形尺寸调整一下. 所以统一用 -1 和 1表示边界值, 中间值乘以系数表示其他坐标点，这样就不用受到渲染矩形区域大小的影响.</p>
 <p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021120501.png" alt="image-01"></p>
 <p>着色器（<strong>Shader</strong>）是运行在GPU上的小程序，这些小程序为图形渲染管线的某个特定部分而运行。使用一种叫 <strong>GLSL</strong> 的类C语言写成，一个典型的着色器有下面的结构</p>
 <figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#version version_number</span></span><br><span class="line"><span class="keyword">in</span> type in_variable_name;</span><br><span class="line"><span class="keyword">in</span> type in_variable_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">out</span> type out_variable_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> type uniform_name;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> main()</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 处理输入并进行一些图形操作</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// 输出处理过的结果到输出变量</span></span><br><span class="line">  out_variable_name = weird_stuff_we_processed;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h4 id="opengl相关库"><a href="#opengl相关库" class="headerlink" title="opengl相关库:"></a>opengl相关库:</h4><p>① glfw：负责创建窗口，上下文，纹理，输入输出、处理消息循环</p>
-<p>② glew：用于加载 opengl 相关库加载</p>
-<h4 id="opengl-参考资料"><a href="#opengl-参考资料" class="headerlink" title="opengl 参考资料"></a>opengl 参考资料</h4><p><a target="_blank" rel="noopener" href="https://antongerdelan.net/opengl/index.html#onlinetuts">https://antongerdelan.net/opengl/index.html#onlinetuts</a></p>
-<h3 id="双缓冲"><a href="#双缓冲" class="headerlink" title="双缓冲"></a>双缓冲</h3><p>应用程序使用单缓冲绘图时可能会存在图像闪烁的问题。 这是因为生成的图像不是一下子被绘制出来的，而是按照从左到右，由上而下逐像素地绘制而成的。最终图像不是在瞬间显示给用户，而是通过一步一步生成的，这会导致渲染的结果很不真实。为了规避这些问题，我们应用双缓冲渲染窗口应用程序。<strong>前</strong>缓冲保存着最终输出的图像，它会在屏幕上显示；而所有的的渲染指令都会在<strong>后</strong>缓冲上绘制。当所有的渲染指令执行完毕后，我们<strong>交换</strong>(Swap)前缓冲和后缓冲，这样图像就立即呈显出来，之前提到的不真实感就消除了。</p>
-<h3 id="OpenGL-调用流程"><a href="#OpenGL-调用流程" class="headerlink" title="OpenGL 调用流程"></a>OpenGL 调用流程</h3><ol>
+<h3 id="着色器数据输入"><a href="#着色器数据输入" class="headerlink" title="着色器数据输入"></a>着色器数据输入</h3><p>CPU数据通过OpenGL缓冲区发送到GPU</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021123002.png" alt="image-02"></p>
+<h4 id="glsl支持的数据类型"><a href="#glsl支持的数据类型" class="headerlink" title="glsl支持的数据类型"></a><a target="_blank" rel="noopener" href="https://github.com/qyvlik/GLSL.qml/blob/master/glsl/GLSL%E5%8F%98%E9%87%8F%E5%92%8C%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.md">glsl支持的数据类型</a></h4><h2 id="双缓冲"><a href="#双缓冲" class="headerlink" title="双缓冲"></a>双缓冲</h2><p>应用程序使用单缓冲绘图时可能会存在图像闪烁的问题。 这是因为生成的图像不是一下子被绘制出来的，而是按照从左到右，由上而下逐像素地绘制而成的。最终图像不是在瞬间显示给用户，而是通过一步一步生成的，这会导致渲染的结果很不真实。为了规避这些问题，我们应用双缓冲渲染窗口应用程序。<strong>前</strong>缓冲保存着最终输出的图像，它会在屏幕上显示；而所有的的渲染指令都会在<strong>后</strong>缓冲上绘制。当所有的渲染指令执行完毕后，我们<strong>交换</strong>(Swap)前缓冲和后缓冲，这样图像就立即呈显出来，之前提到的不真实感就消除了。</p>
+<h2 id="OpenGL-调用流程"><a href="#OpenGL-调用流程" class="headerlink" title="OpenGL 调用流程"></a>OpenGL 调用流程</h2><ol>
 <li>着色器创建流程</li>
 </ol>
-<div id="flowchart-1" class="flow-chart"></div>
+<div id="flowchart-0" class="flow-chart"></div>
 
 <ol start="2">
 <li>创建 OpenGL 工程对象</li>
 </ol>
+<div id="flowchart-1" class="flow-chart"></div>
+
+<ol start="3">
+<li><p>申请顶点队列对象(VAO)、顶点缓冲对象(VBO)、索引缓冲对象(EBO), 细节参考: (<a target="_blank" rel="noopener" href="https://blog.csdn.net/xiji333/article/details/114934590">https://blog.csdn.net/xiji333/article/details/114934590</a>)</p>
 <div id="flowchart-2" class="flow-chart"></div>
 
-
-
-<p>3.申请顶点队列对象(VAO)、顶点缓冲对象(VBO)、索引缓冲对象(EBO)</p>
+<p>​    注：顶点缓冲区使用步骤：</p>
+<p>​    </p>
 <div id="flowchart-3" class="flow-chart"></div>
 
 
 
-
-
-<p>4.使用 texture(纹理) 流程</p>
-<div id="flowchart-4" class="flow-chart"></div>
-
-
-
+<ol start="4">
+<li>使用 texture(纹理) 流程</li>
+</ol>
+<div id="flowchart-4" class="flow-chart"></div></li>
+</ol>
 <p>片段着色器中的变量和我们程序申请的texture资源是通过纹理单元进行传值的. 其关系大致为：</p>
 <div id="sequence-0"></div>
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">start=>start: 开始
-op1=>operation: 申请事件循环 EventLoop
-op2=>operation: 创建窗口资源 WindowedContext
-op3=>operation: 加载shader文件
-op4=>operation: 调用 glCreateProgram 创建着色器程序容器
-end=>end: 处理结束
-
-start->op1->op2->op3->op4->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">start=>start: Start
+<p>注: OpenGL CPU像素数据向GPU纹理传输细节 —— <a target="_blank" rel="noopener" href="https://www.cnblogs.com/dongguolei/p/11982230.html">glPixelStorei</a></p>
+<p>注:  glActiveTexture 激活纹理单元后，调用 glBindTexture 会将 纹理绑定到纹理单元，此时如果再调用 glBindTexture 去操作其他纹理，那当前活跃的纹理单元就绑定为其他的纹理。故在要使用纹理的时候，一定要先 glActiveTexture 然后再 glBindTexture 。</p>
+<h2 id="opengl-参考资料"><a href="#opengl-参考资料" class="headerlink" title="opengl 参考资料"></a>opengl 参考资料</h2><p><a target="_blank" rel="noopener" href="https://antongerdelan.net/opengl/index.html#onlinetuts">https://antongerdelan.net/opengl/index.html#onlinetuts</a></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">start=>start: Start
 op_1=>operation: glCreateShader 创建着器句柄
 op_2=>operation: glShaderSource 加载着色器脚本
 op_3=>operation: glCompileShader 编译着色器脚本
@@ -298,7 +289,7 @@ cond=>condition: 是否成功
 end=>end
 start->op_1->op_2->op_3->op_4->cond
 cond(yes)->end
-cond(no)->op_5->end</textarea><textarea id="flowchart-1-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script><textarea id="flowchart-2-code" style="display: none">st=>start: Start
+cond(no)->op_5->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">st=>start: Start
 op_1=>operation: glCreateProgram 创建工程对象
 op_2=>operation: glAttachShader 加载顶点着色器,片段着色器
 op_3=>operation: glLinkProgram 构建工程
@@ -309,26 +300,33 @@ cond=>condition: 是否成功
 e=>end
 st->op_1->op_2->op_3->op_4->cond
 cond(yes)->op_5->e
-cond(no)->op_6->e</textarea><textarea id="flowchart-2-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-2-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-2-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-2", options);</script><textarea id="flowchart-3-code" style="display: none">st=>start: Start
-op_1=>operation: glGenVertexArrays 申请顶点队列对象(VAO)
-op_2=>operation: glGetBuffer 创建VBO(顶点缓冲对象) EBO(索引缓冲对象)等缓冲对象
-op_3=>operation: glBindVertexArray 将当前执行对象绑定到VAO
-op_4=>operation: glBindData 将VBO绑定到VAO上,并将当前操作对象指向VBO
-op_5=>operation: glBufferData 对VBO EBO填入数据
-op_6=>operation: glVertexAttribPointer 将location id 绑定到当前的 VBO 缓存
-op_7=>operation: glDrawElements 根据 EBO 画出图形
-e=>end: End
-st->op_1->op_2->op_3->op_4->op_5->op_6->op_7->e</textarea><textarea id="flowchart-3-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-3-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-3-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-3", options);</script><textarea id="flowchart-4-code" style="display: none">st=>start: Start
-op_1=>operation: glGenTextures 申请 texture 对象
-op_2=>operation: glBindTexture 绑定当前需要操作的 texture
-op_3=>operation: glTexParameteri 设置 texture 属性?
-op_4=>operation: glTexImage2D 对 texture 填入数据
-op_5=>operation: glGenerateMipmap 生成 mipmap https://zh.wikipedia.org/wiki/Mipmap
-op_6=>operation: glUniform1i 特殊用法: 将 片段着色器中 texture变量 指定为对应的纹理单元
-op_7=>operation: glActiveTexture 激活纹理单元例如:GL_TEXTURE0, 并设置成当前操作的纹理单元
-op_8=>operation: glBindTexture 将我们申请的texture对象绑定到当前的纹理单元中
-e=>end: End
-st->op_1->op_2->op_3->op_4->op_5->op_6->op_7->op_8->e</textarea><textarea id="flowchart-4-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-4-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-4-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-4", options);</script><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">fs texture变量->texture unit: 绑定对应的纹理单元
+cond(no)->op_6->e</textarea><textarea id="flowchart-1-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script><textarea id="flowchart-2-code" style="display: none">   st=>start: Start
+   op_1=>operation: glGenVertexArrays 申请顶点队列对象(VAO)
+   op_2=>operation: glGetBuffer 创建VBO(顶点缓冲对象) EBO(索引缓冲对象)等缓冲对象
+   op_3=>operation: glBindVertexArray 将当前执行对象绑定到VAO
+   op_4=>operation: glBindData 将VBO绑定到VAO上,并将当前操作对象指向VBO
+   op_5=>operation: glBufferData 对VBO EBO填入数据
+   op_6=>operation: glVertexAttribPointer 将location id 绑定到当前的 VBO 缓存
+   op_7=>operation: glDrawElements 根据 EBO 画出图形
+   e=>end: End
+   st->op_1->op_2->op_3->op_4->op_5->op_6->op_7->e</textarea><textarea id="flowchart-2-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-2-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-2-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-2", options);</script><textarea id="flowchart-3-code" style="display: none">   st=>start: Start
+   op_1=>operation: 获取缓冲区标识: glGenBuffers(GLsizei n, GLuint* buffers);
+   op_2=>operation: 绑定缓冲区对象: glBindBuffer(GLenum target, GLuint buffer);
+   op_3=>operation: 用数据填充缓冲区: glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage)
+   op_4=>operation: 更新缓冲数据: glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void*  data);
+   op_5=>operation: 清楚缓冲区对象 glDeleteBuffers(GLsizei n, const GLuint* buffers);
+   e=>end: End
+   st->op_1->op_2->op_3->op_4->op_5->e</textarea><textarea id="flowchart-3-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-3-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-3-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-3", options);</script><textarea id="flowchart-4-code" style="display: none">   st=>start: Start
+   op_1=>operation: glGenTextures 申请 texture 对象
+   op_2=>operation: glBindTexture 绑定当前需要操作的 texture
+   op_3=>operation: glTexParameteri 设置 texture 属性?
+   op_4=>operation: glTexImage2D 对 texture 填入数据
+   op_5=>operation: glGenerateMipmap 生成 mipmap https://zh.wikipedia.org/wiki/Mipmap
+   op_6=>operation: glUniform1i 特殊用法: 将 片段着色器中 texture变量 指定为对应的纹理单元
+   op_7=>operation: glActiveTexture 激活纹理单元例如:GL_TEXTURE0, 并设置成当前操作的纹理单元
+   op_8=>operation: glBindTexture 将我们申请的texture对象绑定到当前的纹理单元中
+   e=>end: End
+   st->op_1->op_2->op_3->op_4->op_5->op_6->op_7->op_8->e</textarea><textarea id="flowchart-4-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-4-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-4-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-4", options);</script><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">fs texture变量->texture unit: 绑定对应的纹理单元
 程序 texture对象资源->texture unit: 程序申请的texture资源输入到纹理单元
 texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script>
       
@@ -1487,7 +1485,7 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
