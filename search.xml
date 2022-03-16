@@ -1105,7 +1105,7 @@ cond(no)->op_6->e</textarea><textarea id="flowchart-1-options" style="display: n
 程序 texture对象资源->texture unit: 程序申请的texture资源输入到纹理单元
 texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script>]]></content>
       <tags>
-        <tag>OpenGL</tag>
+        <tag>OpenGL graphics</tag>
       </tags>
   </entry>
   <entry>
