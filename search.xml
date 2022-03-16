@@ -1105,7 +1105,8 @@ cond(no)->op_6->e</textarea><textarea id="flowchart-1-options" style="display: n
 程序 texture对象资源->texture unit: 程序申请的texture资源输入到纹理单元
 texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script>]]></content>
       <tags>
-        <tag>OpenGL graphics</tag>
+        <tag>OpenGL</tag>
+        <tag>graphics</tag>
       </tags>
   </entry>
   <entry>
@@ -1156,7 +1157,9 @@ op10=>operation: 创建 Pixel shader 对象 CreatePixelShader
 
 start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>]]></content>
       <tags>
-        <tag>windows DirectX graphics</tag>
+        <tag>windows</tag>
+        <tag>DirectX</tag>
+        <tag>graphics</tag>
       </tags>
   </entry>
 </search>
