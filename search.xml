@@ -1157,9 +1157,7 @@ op10=>operation: 创建 Pixel shader 对象 CreatePixelShader
 
 start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>]]></content>
       <tags>
-        <tag>windows</tag>
-        <tag>DirectX</tag>
-        <tag>graphics</tag>
+        <tag>-windows -DirectX -graphics</tag>
       </tags>
   </entry>
 </search>
