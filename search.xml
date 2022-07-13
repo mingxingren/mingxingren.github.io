@@ -75,8 +75,6 @@
 </ol>
 <figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">set_property</span>(<span class="keyword">TARGET</span> d3d9_render PROPERTY MSVC_RUNTIME_LIBRARY <span class="string">&quot;MultiThreaded$&lt;$&lt;CONFIG:Debug&gt;:Debug&gt;&quot;</span>)</span><br></pre></td></tr></table></figure>
 
-
-
 <ol start="14">
 <li><p>std::string 与 std::wstring 相互转换. <a href="https://docs.microsoft.com/en-us/cpp/text/how-to-convert-between-various-string-types?redirectedfrom=MSDN&view=msvc-170">参考链接</a></p>
 </li>
@@ -1307,6 +1305,14 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
       <tags>
         <tag>OpenGL</tag>
         <tag>graphics</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>真心为你</title>
+    <url>/2021/07/13/%E7%9C%9F%E5%BF%83%E4%B8%BA%E4%BD%A0/</url>
+    <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="真心为你"><a href="#真心为你" class="headerlink" title="真心为你"></a>真心为你</h1>]]></content>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
 </search>
