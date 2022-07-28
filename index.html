@@ -150,12 +150,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -184,6 +184,91 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/28/C#%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar01.png">
+      <meta itemprop="name" content="mingxingren">
+      <meta itemprop="description" content="挖一口自己的井">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mingxingren的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/28/C#%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">C#知识整理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-07-28 10:23:00 / 修改时间：10:23:46" itemprop="dateCreated datePublished" datetime="2022-07-28T10:23:00+08:00">2022-07-28</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li><p>C#  函数传递地址的方式有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static void AddSum(ref int i, int j)</span><br><span class="line">&#123;</span><br><span class="line">   i += j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用</span><br><span class="line">AddSum(ref a, b);</span><br></pre></td></tr></table></figure></li>
+<li><p>C# 中的数据类型分 <code>值类型</code> 和 <code>引用类型</code>.</p>
+<p>① 值类型: 直接存储数据的值, 保存在内存中. 一些预定义简单类型,  例如: <code>int</code>, <code>float</code>, <code>bool</code>, <code>char</code> 都是值类型, 另外 <code>enum</code>, <code>struct</code> 也是值类型</p>
+<p>② 引用类型: 存储对值的引用, 实际上存储的就是一个内存的地址. <code>string</code>, <code>数组</code>,<code>class</code>, <code>interface</code>, <code>委托</code>和 <code>封装</code> 都是引用类型，其中 string 是比较特殊的引用类型</p>
+</li>
+<li><p>C# 泛型编程使用 <code>where</code> 约束</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">    约束                说明</span><br><span class="line">    T: struct          类型参数必须是值类型. 可以指定除 Nullable 以外的任何值类型</span><br><span class="line">    </span><br><span class="line">    T: class           类型参数必须是引用类型，包括任何类、接口、委托或者数组类型</span><br><span class="line">    </span><br><span class="line">    T：new()            类型参数必须具有无参数的公共构造函数. 当与其他约束一起使用时, new()</span><br><span class="line">                        约束必须最后指定</span><br><span class="line">    </span><br><span class="line">    T:&lt;基类名&gt;           类型参数必须是指定的基类或派生自指定的基类</span><br><span class="line">    </span><br><span class="line">    T:&lt;接口名称&gt;         类型参数必须是指定的接口或者实现指定的接口. 可以指定多个接口约束. 约束</span><br><span class="line">                        接口也可以是泛型的</span><br><span class="line">    </span><br><span class="line">    T: U                为 T 提供的类型参数必须是为 U 提供的参数或派生自为 U 提供的参数.</span><br><span class="line">                        这称为裸类型约束</span><br></pre></td></tr></table></figure></li>
+<li><p>C# params 关键字</p>
+<p>在 C# 中, 使用 <code>params</code> 关键字可以给一个方法 (method) 传递数量可变的参数 ( paramter ), 类似于<code>python</code> 中的 <code>*arg</code></p>
+<p>注:</p>
+<p>① <code>params</code>后面的参数类型必须是一个数组</p>
+<p>② <code>params</code>后面不允许再有其他参数</p>
+<p>③ 一个方法的申明中只能又一个 <code>params</code> 关键字</p>
+<p>传递方式:</p>
+<p>① 用逗号分隔的一串参数</p>
+<p>② 一个一维数组</p>
+<p>③ 空参数, <code>length</code> 为 0</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1355,94 +1440,6 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
 <p>一个 <strong>GtkWindow</strong> 是一个可以包含其他控件的顶级窗口，窗口通常在桌面系统下具有样式。并且允许用户放缩、移动或者关闭窗体等操作。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 显示窗体</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">gtk_window_present</span> <span class="params">(GtkWindow* window)</span></span></span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/29/meson/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar01.png">
-      <meta itemprop="name" content="mingxingren">
-      <meta itemprop="description" content="挖一口自己的井">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="mingxingren的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/29/meson/" class="post-title-link" itemprop="url">meson</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-29 20:22:00" itemprop="dateCreated datePublished" datetime="2021-07-29T20:22:00+08:00">2021-07-29</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-03-27 20:27:15" itemprop="dateModified" datetime="2022-03-27T20:27:15+08:00">2022-03-27</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="meson是什么"><a href="#meson是什么" class="headerlink" title="meson是什么"></a>meson是什么</h3><p><a target="_blank" rel="noopener" href="https://mesonbuild.com/">Meson</a>是一个开源构建系统，旨在构建速度快和用户友好。</p>
-<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>对多个平台支持，例如：<strong>Linux</strong>、<strong>macOS</strong>、<strong>Windows</strong>、<strong>GCC</strong>、<strong>Clang</strong>、<strong>Visual Studio</strong>等等</li>
-<li>支持语言包括<strong>C</strong>、<strong>C++<strong>、</strong>D</strong>、<strong>Fortran</strong>、<strong>Java</strong>、<strong>Rust</strong></li>
-<li>在一个很好的可读性和用户友好的非图灵完备<strong>DSL</strong>(<strong>domain-specific language</strong> 特定领域的语言)中构建定义</li>
-<li>可以在许多操作系统以及裸机交叉编译</li>
-<li>针对极快的完整和增量构建进行了优化，而不牺牲正确性 —— （原文）<strong>optimized for extremely fast full and incremental builds without sacrificing correctness</strong></li>
-<li>内置的多平台依赖项提供程序，可与发行版软件包协同工作</li>
-<li>比较有意思…</li>
-</ul>
-<h3 id="编译指令"><a href="#编译指令" class="headerlink" title="编译指令"></a>编译指令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /your-project-path/</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> meson builddir &amp;&amp; <span class="built_in">cd</span> builddir</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> meson compile</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> meson <span class="built_in">test</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 该命令是在工程目录下执行的，并非在工程目录下的编译目录执行的</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> DESTDIR=/your-project-path/root meson install -C ./builddir</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>参考：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://mesonbuild.com/">https://mesonbuild.com/</a></li>
-</ul>
 
       
     </div>
