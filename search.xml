@@ -1,61 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>DirectX11 Tutorial</title>
-    <url>/mingxingren/2022/03/16/DirectX11Tutorial/</url>
-    <content><![CDATA[<h2 id="DirectX11-Tutorial"><a href="#DirectX11-Tutorial" class="headerlink" title="DirectX11 Tutorial"></a>DirectX11 Tutorial</h2><h3 id="渲染Yuv纹理流程"><a href="#渲染Yuv纹理流程" class="headerlink" title="渲染Yuv纹理流程"></a>渲染Yuv纹理流程</h3><div id="flowchart-0" class="flow-chart"></div>
-
-
-
-
-
-<h3 id="1-Direct3D初始化-创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain"><a href="#1-Direct3D初始化-创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain" class="headerlink" title="1. Direct3D初始化: 创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain"></a>1. Direct3D初始化: 创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ID3D11Device: 显示适配器, 用于创建资源, 常用资源有: 资源类(ID3D11Resource 包括纹理和缓冲区), 视图类以及着色器. 还可以检测系统环境对功能支持</span><br><span class="line"></span><br><span class="line">ID3D11DeviceContext: D3D设备上下文, 可以看做是一个渲染管线. 渲染管线主要负责渲染和计算工作, 它需要绑定来自与它关联的ID3D11Device所创建的各种资源、视图和着色器才能正常运转, 初次之外，它还能够负责对资源的直接读写操作</span><br><span class="line"></span><br><span class="line">IDXGISwapChain: DXGI交换链, 缓存一个或多个表面(2D纹理), 它们都可以称为后备缓冲(backbuffer)的离屏纹理. 前台缓冲区(front buffer)为当前显示在屏幕上的帧.后备缓冲区是我们主要进行渲染的场所. 这些后备缓冲区通过合适的手段成为渲染管线的输出对象. 呈现(Present)有两种方法:</span><br><span class="line">① BitBlt Model(位块传输模型): 将后备缓冲区的数据进行BitBlt(位块传输, 即内容上的拷贝), 传入到DWM(桌面窗口管理器)与DX共享的后备缓冲, 然后进行翻转以显示其内容. 使用这种模型至少需要一个后备缓冲区。这时Win32应用程序最常用使用的方式, 在进行呈现后, 渲染管线仍然是对同一个后备缓冲区进行输出(支持Windows7 及 更高版本)</span><br><span class="line">② Flip Model(翻转模型): 该模型可以避免上一种方式多余复制, 后备缓冲区表面可以直接与DWM内的前台缓冲区进行翻转. 但是需要创建至少两个后备缓冲区, 并且每次完成呈现后通过代码切换到另一个后备缓冲区进行渲染. 该模型可以用于Win32应用程序已经UWP应用程序(需要DX1.2, 支持Window8 及 更高版本)</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建显示适配器和用于渲染的IDXGISwapChain</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * param pAdapter 视频适配器指针, 传递NULL以使用默认适配器(为IDXGIFactory1::EnumAdapters枚举的第一个适配器)</span></span><br><span class="line"><span class="comment">  * param DriverType 需要什么类型的驱动设备, 一般指 D3D_DRIVER_TYPE_HARDWARE </span></span><br><span class="line"><span class="comment">  * param Software 用于支持软件光栅化设备, 参数总是设定为NULL, 因为我们使用 D3D_DRIVER_TYPE_HARDWARE 类型即硬件渲染, 若使用此功能需要安装一个软件光栅化设备</span></span><br><span class="line"><span class="comment">  * param Flags 设备创建标志, 当以release模式生成程序时，该参数通常设为0（无附加标志值）；当以debug模式生成程序时，该参数应设为：D3D11_CREATE_DEVICE_DEBUG用以激活调试层</span></span><br><span class="line"><span class="comment">  * param pFeatureLevels 指向 D3D_FEATURE_LEVEL 数组的指针, 默认为NULL</span></span><br><span class="line"><span class="comment">  * param FeatureLevels pFeatureLevels数组长度</span></span><br><span class="line"><span class="comment">  * param SDKVersion SDK版本, 为 D3D11_SDK_VERSION</span></span><br><span class="line"><span class="comment">  * param pSwapChainDesc 初始化交换链参数</span></span><br><span class="line"><span class="comment">  * param ppSwapChain out</span></span><br><span class="line"><span class="comment">  * param ppDevice out</span></span><br><span class="line"><span class="comment">  * param pFeatureLevel 返回设备功能支持数组中第一个元素</span></span><br><span class="line"><span class="comment">  * param ppImmediateContext out</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">D3D11CreateDeviceAndSwapChain</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  IDXGIAdapter               *pAdapter,</span></span></span><br><span class="line"><span class="params"><span class="function">                  D3D_DRIVER_TYPE            DriverType,</span></span></span><br><span class="line"><span class="params"><span class="function">                  HMODULE                    Software,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       Flags,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> D3D_FEATURE_LEVEL    *pFeatureLevels,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       FeatureLevels,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       SDKVersion,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> DXGI_SWAP_CHAIN_DESC *pSwapChainDesc,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] IDXGISwapChain             **ppSwapChain,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11Device               **ppDevice,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] D3D_FEATURE_LEVEL          *pFeatureLevel,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11DeviceContext        **ppImmediateContext</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="DXGI交换链与Direct3D设备的交互"><a href="#DXGI交换链与Direct3D设备的交互" class="headerlink" title="DXGI交换链与Direct3D设备的交互"></a>DXGI交换链与Direct3D设备的交互</h4><p>① 获取交换链后备缓冲区 <strong>ID3D11Texture2D</strong> 接口对象</p>
-<p>② 为后备缓冲区创建一个<strong>ID3D11RenderTargetView</strong></p>
-<p>③ 通过<strong>ID3D11Device</strong>创建一个<strong>ID3D11Texture2D</strong>用作深度/模板缓冲区, 要求与后备缓冲区等宽高</p>
-<p>④ 创建深度/模板视图 <strong>ID3D11DepthStrenilView</strong>, 绑定上步创建的2D纹理</p>
-<p>⑤ 通过<strong>ID3D11DeviceContext</strong>, 在渲染管线的输出合并阶段设置渲染目标</p>
-<p>⑥ 在渲染管线的光栅化阶段设置好渲染的视图区域</p>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2022031601.png" alt="image-01"></p>
-<h3 id="2-IDXGISwapChain-创建-ID3D11Texture2D"><a href="#2-IDXGISwapChain-创建-ID3D11Texture2D" class="headerlink" title="2. IDXGISwapChain 创建 ID3D11Texture2D"></a>2. IDXGISwapChain 创建 ID3D11Texture2D</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 返回交换链得后台缓冲</span></span><br><span class="line"><span class="comment"> * param Buffer 从零开始缓冲区, 缓冲区数量由 DXGI_SWAP_CHAIN_DESC.BufferCount 指定</span></span><br><span class="line"><span class="comment"> * param riid in</span></span><br><span class="line"><span class="comment"> * param ppSurface out</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">GetBuffer</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        UINT   Buffer,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in]  REFIID riid,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out] <span class="keyword">void</span>   **ppSurface</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="3-ID3D11Device-CreateRenderTargetView-创建渲染目标视图"><a href="#3-ID3D11Device-CreateRenderTargetView-创建渲染目标视图" class="headerlink" title="3.ID3D11Device::CreateRenderTargetView 创建渲染目标视图"></a>3.ID3D11Device::CreateRenderTargetView 创建渲染目标视图</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建用于访问资源数据的渲染目标视图</span></span><br><span class="line"><span class="comment"> * param ID3D12Resource 指定了将要作为渲染目标的资源</span></span><br><span class="line"><span class="comment"> * param pDesc </span></span><br><span class="line"><span class="comment"> * param ppRTView out</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">CreateRenderTargetView</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  [in]            ID3D11Resource                      *pResource,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> D3D11_RENDER_TARGET_VIEW_DESC *pDesc,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11RenderTargetView              **ppRTView</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.cnblogs.com/X-Jun/p/9069608.html">DirectX11 With Windows SDK – 01 DirectX初始化</a></p>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">start=>start: 开始
-end=>end: 结束
-op1=>operation: 创建 D3D11Device
-op2=>operation: 创建 D3D11Swapchain
-op3=>operation: 创建纹理 D3D11Texture
-op4=>operation: 创建 ID3D11ShaderResourceView
-op5=>operation: 创建渲染目标视图 CreateRenderTargetView
-op6=>operation: 将渲染目标视图绑定到渲染管线 OMSetRenderTargets
-op7=>operation: 创建 shader 字节码
-op8=>operation: 创建 Vertex shader 对象 CreateVertexShader
-op9=>operation: 创建 输入布局 CreateInputLayout
-op10=>operation: 创建 Pixel shader 对象 CreatePixelShader
-
-start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>]]></content>
+    <title>C#知识整理</title>
+    <url>/2022/07/28/C#%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
+    <content><![CDATA[<ol>
+<li><p>C#  函数传递地址的方式有</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static void AddSum(ref int i, int j)</span><br><span class="line">&#123;</span><br><span class="line">   i += j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用</span><br><span class="line">AddSum(ref a, b);</span><br></pre></td></tr></table></figure></li>
+<li><p>C# 中的数据类型分 <code>值类型</code> 和 <code>引用类型</code>.</p>
+<p>① 值类型: 直接存储数据的值, 保存在内存中. 一些预定义简单类型,  例如: <code>int</code>, <code>float</code>, <code>bool</code>, <code>char</code> 都是值类型, 另外 <code>enum</code>, <code>struct</code> 也是值类型</p>
+<p>② 引用类型: 存储对值的引用, 实际上存储的就是一个内存的地址. <code>string</code>, <code>数组</code>,<code>class</code>, <code>interface</code>, <code>委托</code>和 <code>封装</code> 都是引用类型，其中 string 是比较特殊的引用类型</p>
+</li>
+<li><p>C# 泛型编程使用 <code>where</code> 约束</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">    约束                说明</span><br><span class="line">    T: struct          类型参数必须是值类型. 可以指定除 Nullable 以外的任何值类型</span><br><span class="line">    </span><br><span class="line">    T: class           类型参数必须是引用类型，包括任何类、接口、委托或者数组类型</span><br><span class="line">    </span><br><span class="line">    T：new()            类型参数必须具有无参数的公共构造函数. 当与其他约束一起使用时, new()</span><br><span class="line">                        约束必须最后指定</span><br><span class="line">    </span><br><span class="line">    T:&lt;基类名&gt;           类型参数必须是指定的基类或派生自指定的基类</span><br><span class="line">    </span><br><span class="line">    T:&lt;接口名称&gt;         类型参数必须是指定的接口或者实现指定的接口. 可以指定多个接口约束. 约束</span><br><span class="line">                        接口也可以是泛型的</span><br><span class="line">    </span><br><span class="line">    T: U                为 T 提供的类型参数必须是为 U 提供的参数或派生自为 U 提供的参数.</span><br><span class="line">                        这称为裸类型约束</span><br></pre></td></tr></table></figure></li>
+<li><p>C# params 关键字</p>
+<p>在 C# 中, 使用 <code>params</code> 关键字可以给一个方法 (method) 传递数量可变的参数 ( paramter ), 类似于<code>python</code> 中的 <code>*arg</code></p>
+<p>注:</p>
+<p>① <code>params</code>后面的参数类型必须是一个数组</p>
+<p>② <code>params</code>后面不允许再有其他参数</p>
+<p>③ 一个方法的申明中只能又一个 <code>params</code> 关键字</p>
+<p>传递方式:</p>
+<p>① 用逗号分隔的一串参数</p>
+<p>② 一个一维数组</p>
+<p>③ 空参数, <code>length</code> 为 0</p>
+</li>
+</ol>
+]]></content>
       <tags>
-        <tag>windows</tag>
-        <tag>DirectX</tag>
-        <tag>graphics</tag>
+        <tag>C#</tag>
       </tags>
   </entry>
   <entry>
     <title>C/C++的编程问题</title>
-    <url>/mingxingren/2021/08/19/C%E5%92%8CC++%E7%9A%84%E7%BC%96%E7%A8%8B%E9%97%AE%E9%A2%98/</url>
+    <url>/2021/08/19/C%E5%92%8CC++%E7%9A%84%E7%BC%96%E7%A8%8B%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<ol>
 <li>宏定义 ’**#<strong>‘ 和 ’</strong>##<strong>‘ 的使用说明: ‘</strong>#<strong>‘ 用于将代码转换成字符串; ‘</strong>##**’ 用于拼接代码; 使用范例:</li>
 </ol>
@@ -145,85 +121,8 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
       </tags>
   </entry>
   <entry>
-    <title>LLVM介绍及编译安装</title>
-    <url>/mingxingren/2021/07/18/LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h2 id="LLVM介绍"><a href="#LLVM介绍" class="headerlink" title="LLVM介绍"></a>LLVM介绍</h2><p>LLVM的命名最早起源于底层语言虚拟机（Low Level Virtual Machine）的缩写 。它是一个用于建立编译器的基础框架，以C++编写。创建此工程的目的是对于任意汇编语言，利用该基础框架，构建一个包括编译时、链接时、执行时等的语言执行器。目前官方的LLVM只支持处理C/C++，Objective-C三种语言，当然的也有的一些非官方的扩展，使其支持ActionScript、Ada、D语言、Fortran、GLSL、HaskKell、Java bytecode、Objective-C、Python、Ruby、Rust、Scala以及C#。</p>
-<p>传统的静态编译器分为三个阶段：前端、中端（优化）、后端，LLVM 也不例外，只是 LLVM 实现了一种<strong>与源编程语言和目标机器架构无关的通用中间表示——LLVM IR</strong>， 这样如果支持一种新的编程语言只需重新实现一个前端，支持一种新的目标架构只需重新实现一个后端，前端和后端的链接枢纽就是<strong>LLVM IR</strong></p>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071801.jpg" alt="image-01"></p>
-<h2 id="LLVM项目编译部署"><a href="#LLVM项目编译部署" class="headerlink" title="LLVM项目编译部署"></a>LLVM项目编译部署</h2><p>一开始我只是想使用 <strong>Clang</strong> 编译器，但是又不想直接通过 <strong>apt-get</strong> （Ubuntu 20.04）的方式安装，所以尝试编译项目源码。</p>
-<p>源码下载地址，这里我们直接选择 <a href="https://github.com/llvm/llvm-project">llvm-project</a>，因为这个项目不经包含llvm项目还有包含其他子项目（clang也在其中）。再编译之前要确保系统已经下载一下 <code>gcc  g++  make  cmake  python3</code></p>
-<ul>
-<li><p>首先 <code>cd  llvm-project</code> </p>
-</li>
-<li><p>在当前目录执行 <code>cmake -S llvm -B build -G &lt;generator&gt; [options]</code>，</p>
-<p><code>generator</code> 选项如下：</p>
-<ul>
-<li><code>Ninja</code></li>
-<li><code>Unix Makefiles</code></li>
-<li><code>Visual Studio</code></li>
-<li><code>Xcode</code></li>
-</ul>
-<p>这里我们选择 <code>&quot;Unix Makefiles&quot;</code></p>
-<p>  比较常用的编译选项：</p>
-<ul>
-<li><code>-DLLVM_ENABLE_PROJECTS=&#39;...&#39;</code> 选择需要编译的子项目，例如：clang, clang-tools-extra, libcxx, libcxxabi, libunwind, lldb, compiler-rt, lld, polly, or cross-project-tests.</li>
-<li><code>-DCMAKE_INSTALL_PREFIX=directory</code> 项目编译好后的下载目录，默认是 <code>/usr/local</code> </li>
-<li><code>-DCMAKE_BUILD_TYPE=type</code> 编译类型，例如  Debug, Release, RelWithDebInfo, MinSizeRel。默认是Debug模式</li>
-<li><code>-DLLVM_ENABLE_ASSERTIONS=On</code> 编译是否断言检测（Debug模式下默认开启，其他编译默认关闭）</li>
-</ul>
-</li>
-</ul>
-<p>​    我在编译的时候，命令执行如下：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cmake -S llvm -B build -G &quot;Unix Makefiles&quot; -DLLVM_ENABLE_PROJECTS=&quot;clang;clang-tools-extra;libcxx;libcxxabi;libunwind;lldb;compiler-rt;lld;polly&quot; -DCMAKE_INSTALL_PREFIX=&quot;/usr/local/llvm-tool&quot; -DCMAKE_BUILD_TYPE=&quot;Release&quot;</span><br><span class="line"></span><br><span class="line">cmake --build build</span><br></pre></td></tr></table></figure>
-
-<p>编译的时间非常漫长，我碰到过最长的编译时间了。看网上博客说有可能在编译的时候出现的内存不足的问题，如果你是用虚拟机进行编译可以扩大虚拟机内存。第一次编译的时候我遇到的一个 python 的模块缺失，下载补全模块就好。</p>
-<p>编译完成后，到 <code>llvm-project</code> 的 <code>build</code>目录，执行 <code>make install</code> 命令后，llvm 的相关工具便会部署到之前cmake 指定的目录了！</p>
-<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p>① <a href="http://www.nagain.com/activity/article/4/">http://www.nagain.com/activity/article/4/</a></p>
-<p>② <a href="https://zhuanlan.zhihu.com/p/102250532">https://zhuanlan.zhihu.com/p/102250532</a></p>
-<p>③ <a href="https://github.com/llvm/llvm-project/blob/main/README.md">https://github.com/llvm/llvm-project/blob/main/README.md</a></p>
-]]></content>
-      <tags>
-        <tag>LLVM</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>WebAssembly环境配置</title>
-    <url>/mingxingren/2021/07/14/WebAssembly%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h2 id="WebAssembly-介绍"><a href="#WebAssembly-介绍" class="headerlink" title="WebAssembly 介绍"></a>WebAssembly 介绍</h2><p>WebAssembly（缩写为 Wasm）是一种用于基于堆栈的虚拟机的二进制指令格式。 Wasm 被设计为编程语言的可移植编译目标，支持在 Web 上部署客户端和服务器应用程序。简单来说就是可以将C/C++/Rust等语言编写的程序运行在浏览器上，这种技术有些类似于以前ActiveX等各种浏览器插件技术，所不同是 Wasm 被现在各种浏览器厂商所支持！</p>
-<h2 id="Windows环境下，Qt配置WebAssembly"><a href="#Windows环境下，Qt配置WebAssembly" class="headerlink" title="Windows环境下，Qt配置WebAssembly"></a>Windows环境下，Qt配置WebAssembly</h2><p>目前 <strong>Qt5.15.2</strong> 版本支持 <strong>WebAssembly</strong> 编译！但在我配置的时候遇到了一些问题，步骤如下：</p>
-<ul>
-<li><p>首先在下载<strong>Qt</strong>时，选择版本 <strong>5.15.2</strong>，需要勾选 <strong>WebAssembly</strong>编译器，如下图：</p>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071401.png" alt="image-01"></p>
-</li>
-</ul>
-<ul>
-<li><p>当然因为缺少 [emscriptem][<a href="https://emscripten.org/]">https://emscripten.org/]</a>  导致 <strong>Qt</strong>的 <strong>WebAssembly</strong> 不可用。[emscriptem][<a href="https://emscripten.org/]">https://emscripten.org/]</a> 是一个WebAssembly编译器工具链，它是使用LLVM，注重速度、大小和web平台。通过<strong>git</strong> 或者直接访问<strong>github</strong>下载源码，在配置之前我们需要下载 <strong>python</strong> 来运行<strong>emscripten</strong>配置脚本。然后根据   [emscripten download][<a href="https://emscripten.org/docs/getting_started/downloads.html]">https://emscripten.org/docs/getting_started/downloads.html]</a> 下载说明进行配置。 注意 Qt 5.15.2的 <strong>WebAssembly</strong>编译器是需要下载 emsdk 1.39.8，</p>
-<p>如下图：</p>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071402.png" alt="image-02"></p>
-</li>
-<li><p>配置好<strong>emscriptem</strong>后，打开<strong>QtCreator</strong>发现 <strong>Qt 5.15.2 WebAssembly</strong>依然是<strong>error</strong>状态如图:</p>
-</li>
-</ul>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071403.png" alt="image-03"></p>
-<p>​    之前浏览别人博客，有人说要把<strong>emsdk</strong> 文件中 <strong>.emscripten</strong> 文件替换到用户目录下，以便<strong>QtCreator</strong> 可以找到<strong>emsdk</strong>的编译器。但 是我试过之后没有效果。后面询问过朋友之后，发现通过在设备中添加 <strong>emsdk</strong> 的路径可以解决这个问题（朋友万岁！！！），如图：</p>
-<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071404.png" alt="image-04"></p>
-<p>配置好设备之后重启一下<strong>QtCreator</strong>，应该就可以使用 <strong>Qt 5.15.2 WebAssembly</strong> 编译器了。</p>
-<h2 id="跑在浏览器上的C-Qt-程序"><a href="#跑在浏览器上的C-Qt-程序" class="headerlink" title="跑在浏览器上的C++ Qt 程序"></a>跑在浏览器上的C++ Qt 程序</h2><p>使用 <strong>Qt WebAssembly</strong> 进行编译后默认使用IE浏览器呈现效果，但是IE并不支持 <strong>WebAssembly</strong> ，可以用<strong>Chrome</strong>、<strong>Edge</strong>等浏览器查看效果！</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
-<ol>
-<li><a href="https://cloud.tencent.com/developer/news/690454">https://cloud.tencent.com/developer/news/690454</a></li>
-<li><a href="https://blog.csdn.net/feiyangqingyun/article/details/112986837">https://blog.csdn.net/feiyangqingyun/article/details/112986837</a></li>
-</ol>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>Qt</tag>
-        <tag>WebAssembly</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GLib和GTK3</title>
-    <url>/mingxingren/2021/08/06/GLib%20and%20GTK3/</url>
+    <url>/2021/08/06/GLib%20and%20GTK3/</url>
     <content><![CDATA[<blockquote>
 <p>该篇为我学习GLib 和 GTK 的笔记，只是记录一些知识点和写法，若碰巧浏览此篇，尽量不要以此篇为准！</p>
 </blockquote>
@@ -304,8 +203,138 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
       </tags>
   </entry>
   <entry>
+    <title>LLVM介绍及编译安装</title>
+    <url>/2021/07/18/LLVM%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h2 id="LLVM介绍"><a href="#LLVM介绍" class="headerlink" title="LLVM介绍"></a>LLVM介绍</h2><p>LLVM的命名最早起源于底层语言虚拟机（Low Level Virtual Machine）的缩写 。它是一个用于建立编译器的基础框架，以C++编写。创建此工程的目的是对于任意汇编语言，利用该基础框架，构建一个包括编译时、链接时、执行时等的语言执行器。目前官方的LLVM只支持处理C/C++，Objective-C三种语言，当然的也有的一些非官方的扩展，使其支持ActionScript、Ada、D语言、Fortran、GLSL、HaskKell、Java bytecode、Objective-C、Python、Ruby、Rust、Scala以及C#。</p>
+<p>传统的静态编译器分为三个阶段：前端、中端（优化）、后端，LLVM 也不例外，只是 LLVM 实现了一种<strong>与源编程语言和目标机器架构无关的通用中间表示——LLVM IR</strong>， 这样如果支持一种新的编程语言只需重新实现一个前端，支持一种新的目标架构只需重新实现一个后端，前端和后端的链接枢纽就是<strong>LLVM IR</strong></p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071801.jpg" alt="image-01"></p>
+<h2 id="LLVM项目编译部署"><a href="#LLVM项目编译部署" class="headerlink" title="LLVM项目编译部署"></a>LLVM项目编译部署</h2><p>一开始我只是想使用 <strong>Clang</strong> 编译器，但是又不想直接通过 <strong>apt-get</strong> （Ubuntu 20.04）的方式安装，所以尝试编译项目源码。</p>
+<p>源码下载地址，这里我们直接选择 <a href="https://github.com/llvm/llvm-project">llvm-project</a>，因为这个项目不经包含llvm项目还有包含其他子项目（clang也在其中）。再编译之前要确保系统已经下载一下 <code>gcc  g++  make  cmake  python3</code></p>
+<ul>
+<li><p>首先 <code>cd  llvm-project</code> </p>
+</li>
+<li><p>在当前目录执行 <code>cmake -S llvm -B build -G &lt;generator&gt; [options]</code>，</p>
+<p><code>generator</code> 选项如下：</p>
+<ul>
+<li><code>Ninja</code></li>
+<li><code>Unix Makefiles</code></li>
+<li><code>Visual Studio</code></li>
+<li><code>Xcode</code></li>
+</ul>
+<p>这里我们选择 <code>&quot;Unix Makefiles&quot;</code></p>
+<p>  比较常用的编译选项：</p>
+<ul>
+<li><code>-DLLVM_ENABLE_PROJECTS=&#39;...&#39;</code> 选择需要编译的子项目，例如：clang, clang-tools-extra, libcxx, libcxxabi, libunwind, lldb, compiler-rt, lld, polly, or cross-project-tests.</li>
+<li><code>-DCMAKE_INSTALL_PREFIX=directory</code> 项目编译好后的下载目录，默认是 <code>/usr/local</code> </li>
+<li><code>-DCMAKE_BUILD_TYPE=type</code> 编译类型，例如  Debug, Release, RelWithDebInfo, MinSizeRel。默认是Debug模式</li>
+<li><code>-DLLVM_ENABLE_ASSERTIONS=On</code> 编译是否断言检测（Debug模式下默认开启，其他编译默认关闭）</li>
+</ul>
+</li>
+</ul>
+<p>​    我在编译的时候，命令执行如下：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cmake -S llvm -B build -G &quot;Unix Makefiles&quot; -DLLVM_ENABLE_PROJECTS=&quot;clang;clang-tools-extra;libcxx;libcxxabi;libunwind;lldb;compiler-rt;lld;polly&quot; -DCMAKE_INSTALL_PREFIX=&quot;/usr/local/llvm-tool&quot; -DCMAKE_BUILD_TYPE=&quot;Release&quot;</span><br><span class="line"></span><br><span class="line">cmake --build build</span><br></pre></td></tr></table></figure>
+
+<p>编译的时间非常漫长，我碰到过最长的编译时间了。看网上博客说有可能在编译的时候出现的内存不足的问题，如果你是用虚拟机进行编译可以扩大虚拟机内存。第一次编译的时候我遇到的一个 python 的模块缺失，下载补全模块就好。</p>
+<p>编译完成后，到 <code>llvm-project</code> 的 <code>build</code>目录，执行 <code>make install</code> 命令后，llvm 的相关工具便会部署到之前cmake 指定的目录了！</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p>① <a href="http://www.nagain.com/activity/article/4/">http://www.nagain.com/activity/article/4/</a></p>
+<p>② <a href="https://zhuanlan.zhihu.com/p/102250532">https://zhuanlan.zhihu.com/p/102250532</a></p>
+<p>③ <a href="https://github.com/llvm/llvm-project/blob/main/README.md">https://github.com/llvm/llvm-project/blob/main/README.md</a></p>
+]]></content>
+      <tags>
+        <tag>LLVM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DirectX11 Tutorial</title>
+    <url>/2022/03/16/DirectX11Tutorial/</url>
+    <content><![CDATA[<h2 id="DirectX11-Tutorial"><a href="#DirectX11-Tutorial" class="headerlink" title="DirectX11 Tutorial"></a>DirectX11 Tutorial</h2><h3 id="渲染Yuv纹理流程"><a href="#渲染Yuv纹理流程" class="headerlink" title="渲染Yuv纹理流程"></a>渲染Yuv纹理流程</h3><div id="flowchart-0" class="flow-chart"></div>
+
+
+
+
+
+<h3 id="1-Direct3D初始化-创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain"><a href="#1-Direct3D初始化-创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain" class="headerlink" title="1. Direct3D初始化: 创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain"></a>1. Direct3D初始化: 创建ID3D11Device、ID3D11DeviceContext、IDXGISwapChain</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ID3D11Device: 显示适配器, 用于创建资源, 常用资源有: 资源类(ID3D11Resource 包括纹理和缓冲区), 视图类以及着色器. 还可以检测系统环境对功能支持</span><br><span class="line"></span><br><span class="line">ID3D11DeviceContext: D3D设备上下文, 可以看做是一个渲染管线. 渲染管线主要负责渲染和计算工作, 它需要绑定来自与它关联的ID3D11Device所创建的各种资源、视图和着色器才能正常运转, 初次之外，它还能够负责对资源的直接读写操作</span><br><span class="line"></span><br><span class="line">IDXGISwapChain: DXGI交换链, 缓存一个或多个表面(2D纹理), 它们都可以称为后备缓冲(backbuffer)的离屏纹理. 前台缓冲区(front buffer)为当前显示在屏幕上的帧.后备缓冲区是我们主要进行渲染的场所. 这些后备缓冲区通过合适的手段成为渲染管线的输出对象. 呈现(Present)有两种方法:</span><br><span class="line">① BitBlt Model(位块传输模型): 将后备缓冲区的数据进行BitBlt(位块传输, 即内容上的拷贝), 传入到DWM(桌面窗口管理器)与DX共享的后备缓冲, 然后进行翻转以显示其内容. 使用这种模型至少需要一个后备缓冲区。这时Win32应用程序最常用使用的方式, 在进行呈现后, 渲染管线仍然是对同一个后备缓冲区进行输出(支持Windows7 及 更高版本)</span><br><span class="line">② Flip Model(翻转模型): 该模型可以避免上一种方式多余复制, 后备缓冲区表面可以直接与DWM内的前台缓冲区进行翻转. 但是需要创建至少两个后备缓冲区, 并且每次完成呈现后通过代码切换到另一个后备缓冲区进行渲染. 该模型可以用于Win32应用程序已经UWP应用程序(需要DX1.2, 支持Window8 及 更高版本)</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建显示适配器和用于渲染的IDXGISwapChain</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * param pAdapter 视频适配器指针, 传递NULL以使用默认适配器(为IDXGIFactory1::EnumAdapters枚举的第一个适配器)</span></span><br><span class="line"><span class="comment">  * param DriverType 需要什么类型的驱动设备, 一般指 D3D_DRIVER_TYPE_HARDWARE </span></span><br><span class="line"><span class="comment">  * param Software 用于支持软件光栅化设备, 参数总是设定为NULL, 因为我们使用 D3D_DRIVER_TYPE_HARDWARE 类型即硬件渲染, 若使用此功能需要安装一个软件光栅化设备</span></span><br><span class="line"><span class="comment">  * param Flags 设备创建标志, 当以release模式生成程序时，该参数通常设为0（无附加标志值）；当以debug模式生成程序时，该参数应设为：D3D11_CREATE_DEVICE_DEBUG用以激活调试层</span></span><br><span class="line"><span class="comment">  * param pFeatureLevels 指向 D3D_FEATURE_LEVEL 数组的指针, 默认为NULL</span></span><br><span class="line"><span class="comment">  * param FeatureLevels pFeatureLevels数组长度</span></span><br><span class="line"><span class="comment">  * param SDKVersion SDK版本, 为 D3D11_SDK_VERSION</span></span><br><span class="line"><span class="comment">  * param pSwapChainDesc 初始化交换链参数</span></span><br><span class="line"><span class="comment">  * param ppSwapChain out</span></span><br><span class="line"><span class="comment">  * param ppDevice out</span></span><br><span class="line"><span class="comment">  * param pFeatureLevel 返回设备功能支持数组中第一个元素</span></span><br><span class="line"><span class="comment">  * param ppImmediateContext out</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">D3D11CreateDeviceAndSwapChain</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  IDXGIAdapter               *pAdapter,</span></span></span><br><span class="line"><span class="params"><span class="function">                  D3D_DRIVER_TYPE            DriverType,</span></span></span><br><span class="line"><span class="params"><span class="function">                  HMODULE                    Software,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       Flags,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> D3D_FEATURE_LEVEL    *pFeatureLevels,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       FeatureLevels,</span></span></span><br><span class="line"><span class="params"><span class="function">                  UINT                       SDKVersion,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> DXGI_SWAP_CHAIN_DESC *pSwapChainDesc,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] IDXGISwapChain             **ppSwapChain,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11Device               **ppDevice,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] D3D_FEATURE_LEVEL          *pFeatureLevel,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11DeviceContext        **ppImmediateContext</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="DXGI交换链与Direct3D设备的交互"><a href="#DXGI交换链与Direct3D设备的交互" class="headerlink" title="DXGI交换链与Direct3D设备的交互"></a>DXGI交换链与Direct3D设备的交互</h4><p>① 获取交换链后备缓冲区 <strong>ID3D11Texture2D</strong> 接口对象</p>
+<p>② 为后备缓冲区创建一个<strong>ID3D11RenderTargetView</strong></p>
+<p>③ 通过<strong>ID3D11Device</strong>创建一个<strong>ID3D11Texture2D</strong>用作深度/模板缓冲区, 要求与后备缓冲区等宽高</p>
+<p>④ 创建深度/模板视图 <strong>ID3D11DepthStrenilView</strong>, 绑定上步创建的2D纹理</p>
+<p>⑤ 通过<strong>ID3D11DeviceContext</strong>, 在渲染管线的输出合并阶段设置渲染目标</p>
+<p>⑥ 在渲染管线的光栅化阶段设置好渲染的视图区域</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2022031601.png" alt="image-01"></p>
+<h3 id="2-IDXGISwapChain-创建-ID3D11Texture2D"><a href="#2-IDXGISwapChain-创建-ID3D11Texture2D" class="headerlink" title="2. IDXGISwapChain 创建 ID3D11Texture2D"></a>2. IDXGISwapChain 创建 ID3D11Texture2D</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 返回交换链得后台缓冲</span></span><br><span class="line"><span class="comment"> * param Buffer 从零开始缓冲区, 缓冲区数量由 DXGI_SWAP_CHAIN_DESC.BufferCount 指定</span></span><br><span class="line"><span class="comment"> * param riid in</span></span><br><span class="line"><span class="comment"> * param ppSurface out</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">GetBuffer</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        UINT   Buffer,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in]  REFIID riid,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out] <span class="keyword">void</span>   **ppSurface</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-ID3D11Device-CreateRenderTargetView-创建渲染目标视图"><a href="#3-ID3D11Device-CreateRenderTargetView-创建渲染目标视图" class="headerlink" title="3.ID3D11Device::CreateRenderTargetView 创建渲染目标视图"></a>3.ID3D11Device::CreateRenderTargetView 创建渲染目标视图</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建用于访问资源数据的渲染目标视图</span></span><br><span class="line"><span class="comment"> * param ID3D12Resource 指定了将要作为渲染目标的资源</span></span><br><span class="line"><span class="comment"> * param pDesc </span></span><br><span class="line"><span class="comment"> * param ppRTView out</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="function">HRESULT <span class="title">CreateRenderTargetView</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  [in]            ID3D11Resource                      *pResource,</span></span></span><br><span class="line"><span class="params"><span class="function">  [in, optional]  <span class="keyword">const</span> D3D11_RENDER_TARGET_VIEW_DESC *pDesc,</span></span></span><br><span class="line"><span class="params"><span class="function">  [out, optional] ID3D11RenderTargetView              **ppRTView</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.cnblogs.com/X-Jun/p/9069608.html">DirectX11 With Windows SDK – 01 DirectX初始化</a></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">start=>start: 开始
+end=>end: 结束
+op1=>operation: 创建 D3D11Device
+op2=>operation: 创建 D3D11Swapchain
+op3=>operation: 创建纹理 D3D11Texture
+op4=>operation: 创建 ID3D11ShaderResourceView
+op5=>operation: 创建渲染目标视图 CreateRenderTargetView
+op6=>operation: 将渲染目标视图绑定到渲染管线 OMSetRenderTargets
+op7=>operation: 创建 shader 字节码
+op8=>operation: 创建 Vertex shader 对象 CreateVertexShader
+op9=>operation: 创建 输入布局 CreateInputLayout
+op10=>operation: 创建 Pixel shader 对象 CreatePixelShader
+
+start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>]]></content>
+      <tags>
+        <tag>windows</tag>
+        <tag>DirectX</tag>
+        <tag>graphics</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>WebAssembly环境配置</title>
+    <url>/2021/07/14/WebAssembly%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h2 id="WebAssembly-介绍"><a href="#WebAssembly-介绍" class="headerlink" title="WebAssembly 介绍"></a>WebAssembly 介绍</h2><p>WebAssembly（缩写为 Wasm）是一种用于基于堆栈的虚拟机的二进制指令格式。 Wasm 被设计为编程语言的可移植编译目标，支持在 Web 上部署客户端和服务器应用程序。简单来说就是可以将C/C++/Rust等语言编写的程序运行在浏览器上，这种技术有些类似于以前ActiveX等各种浏览器插件技术，所不同是 Wasm 被现在各种浏览器厂商所支持！</p>
+<h2 id="Windows环境下，Qt配置WebAssembly"><a href="#Windows环境下，Qt配置WebAssembly" class="headerlink" title="Windows环境下，Qt配置WebAssembly"></a>Windows环境下，Qt配置WebAssembly</h2><p>目前 <strong>Qt5.15.2</strong> 版本支持 <strong>WebAssembly</strong> 编译！但在我配置的时候遇到了一些问题，步骤如下：</p>
+<ul>
+<li><p>首先在下载<strong>Qt</strong>时，选择版本 <strong>5.15.2</strong>，需要勾选 <strong>WebAssembly</strong>编译器，如下图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071401.png" alt="image-01"></p>
+</li>
+</ul>
+<ul>
+<li><p>当然因为缺少 [emscriptem][<a href="https://emscripten.org/]">https://emscripten.org/]</a>  导致 <strong>Qt</strong>的 <strong>WebAssembly</strong> 不可用。[emscriptem][<a href="https://emscripten.org/]">https://emscripten.org/]</a> 是一个WebAssembly编译器工具链，它是使用LLVM，注重速度、大小和web平台。通过<strong>git</strong> 或者直接访问<strong>github</strong>下载源码，在配置之前我们需要下载 <strong>python</strong> 来运行<strong>emscripten</strong>配置脚本。然后根据   [emscripten download][<a href="https://emscripten.org/docs/getting_started/downloads.html]">https://emscripten.org/docs/getting_started/downloads.html]</a> 下载说明进行配置。 注意 Qt 5.15.2的 <strong>WebAssembly</strong>编译器是需要下载 emsdk 1.39.8，</p>
+<p>如下图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071402.png" alt="image-02"></p>
+</li>
+<li><p>配置好<strong>emscriptem</strong>后，打开<strong>QtCreator</strong>发现 <strong>Qt 5.15.2 WebAssembly</strong>依然是<strong>error</strong>状态如图:</p>
+</li>
+</ul>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071403.png" alt="image-03"></p>
+<p>​    之前浏览别人博客，有人说要把<strong>emsdk</strong> 文件中 <strong>.emscripten</strong> 文件替换到用户目录下，以便<strong>QtCreator</strong> 可以找到<strong>emsdk</strong>的编译器。但 是我试过之后没有效果。后面询问过朋友之后，发现通过在设备中添加 <strong>emsdk</strong> 的路径可以解决这个问题（朋友万岁！！！），如图：</p>
+<p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021071404.png" alt="image-04"></p>
+<p>配置好设备之后重启一下<strong>QtCreator</strong>，应该就可以使用 <strong>Qt 5.15.2 WebAssembly</strong> 编译器了。</p>
+<h2 id="跑在浏览器上的C-Qt-程序"><a href="#跑在浏览器上的C-Qt-程序" class="headerlink" title="跑在浏览器上的C++ Qt 程序"></a>跑在浏览器上的C++ Qt 程序</h2><p>使用 <strong>Qt WebAssembly</strong> 进行编译后默认使用IE浏览器呈现效果，但是IE并不支持 <strong>WebAssembly</strong> ，可以用<strong>Chrome</strong>、<strong>Edge</strong>等浏览器查看效果！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><blockquote>
+<ol>
+<li><a href="https://cloud.tencent.com/developer/news/690454">https://cloud.tencent.com/developer/news/690454</a></li>
+<li><a href="https://blog.csdn.net/feiyangqingyun/article/details/112986837">https://blog.csdn.net/feiyangqingyun/article/details/112986837</a></li>
+</ol>
+</blockquote>
+]]></content>
+      <tags>
+        <tag>Qt</tag>
+        <tag>WebAssembly</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
-    <url>/mingxingren/2021/06/12/hello-world/</url>
+    <url>/2021/06/12/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
@@ -323,7 +352,7 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
   </entry>
   <entry>
     <title>imgui接口说明文档</title>
-    <url>/mingxingren/2021/11/25/imgui%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3/</url>
+    <url>/2021/11/25/imgui%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3/</url>
     <content><![CDATA[<h2 id="Dear-Imgui-Ui部分的API说明"><a href="#Dear-Imgui-Ui部分的API说明" class="headerlink" title="Dear Imgui Ui部分的API说明"></a>Dear Imgui Ui部分的API说明</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 开始新的一帧，可以提交任何指令直到调用 Render()/EndFrame()</span></span><br><span class="line"><span class="function">IMGUI_API <span class="keyword">void</span> <span class="title">NewFrame</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 将 window 入栈并且开始调用命令修饰它，直到调用 End 让 window 出栈</span></span><br><span class="line"><span class="comment">// 当 bool *p_open！= NULL, 窗体右上角会有关闭选项, 点击这个选项会设置p_open为false</span></span><br><span class="line"><span class="comment">// 可以在同一帧调用多次 Begin()/End() 来对同一个窗体进行多次操作，前提是 name 相同</span></span><br><span class="line"><span class="comment">// 像 flags 或者 p_open 只在第一次调用 Begin() 起作用</span></span><br><span class="line"><span class="comment">// Begin() 返回 false 表示窗口已折叠或完全裁剪，因此可以提前退出并省略提交</span></span><br><span class="line"><span class="comment">// [重要提示: 由于遗留问题，这与大多数其他函数如 BeginMenu/EndMenu、BeginPopup/EndPopup 等不一致</span></span><br><span class="line"><span class="comment">// , 只有在相应的 BeginXXX函数返回 true 时才应调用 EndXXX 调用. Begin 和 BeginChild 是唯一奇数. </span></span><br><span class="line"><span class="comment">// 将在未来的更新中修复]</span></span><br><span class="line"><span class="comment">// 请注意，窗口堆栈的底部始终包含一个名为&quot;调试&quot;的窗口</span></span><br><span class="line"><span class="function">IMGUI_API <span class="keyword">bool</span> <span class="title">Begin</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">bool</span>* p_open = <span class="literal">NULL</span>, ImGuiWindowFlags flags = <span class="number">0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// ImGuiWindowFlags 说明</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">ImGuiWindowFlags_</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ImGuiWindowFlags_None                   = <span class="number">0</span>,</span><br><span class="line">    ImGuiWindowFlags_NoTitleBar             = <span class="number">1</span> &lt;&lt; <span class="number">0</span>,   <span class="comment">// 禁用标题栏</span></span><br><span class="line">    ImGuiWindowFlags_NoResize               = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,   <span class="comment">// 禁止用户调整通过右下角调整大小</span></span><br><span class="line">    ImGuiWindowFlags_NoMove                 = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,   <span class="comment">// 禁止用户移动窗体</span></span><br><span class="line">    ImGuiWindowFlags_NoScrollbar            = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,   <span class="comment">// 禁止滚动条 (window can still scroll with mouse or programmatically)</span></span><br><span class="line">    ImGuiWindowFlags_NoScrollWithMouse      = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,   <span class="comment">// 禁止用户使用鼠标滚轮垂直滚动. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.</span></span><br><span class="line">    ImGuiWindowFlags_NoCollapse             = <span class="number">1</span> &lt;&lt; <span class="number">5</span>,   <span class="comment">// 禁止用户通过双击折叠窗口</span></span><br><span class="line">    ImGuiWindowFlags_AlwaysAutoResize       = <span class="number">1</span> &lt;&lt; <span class="number">6</span>,   <span class="comment">// 窗体大小自适应每帧内容</span></span><br><span class="line">    ImGuiWindowFlags_NoBackground           = <span class="number">1</span> &lt;&lt; <span class="number">7</span>,   <span class="comment">// 禁止画背景和边框. Similar as using SetNextWindowBgAlpha(0.0f).</span></span><br><span class="line">    ImGuiWindowFlags_NoSavedSettings        = <span class="number">1</span> &lt;&lt; <span class="number">8</span>,   <span class="comment">// Never load/save settings in .ini file</span></span><br><span class="line">    ImGuiWindowFlags_NoMouseInputs          = <span class="number">1</span> &lt;&lt; <span class="number">9</span>,   <span class="comment">// 禁止捕捉鼠标, hovering test with pass through.</span></span><br><span class="line">    ImGuiWindowFlags_MenuBar                = <span class="number">1</span> &lt;&lt; <span class="number">10</span>,  <span class="comment">// 有一个菜单栏</span></span><br><span class="line">    ImGuiWindowFlags_HorizontalScrollbar    = <span class="number">1</span> &lt;&lt; <span class="number">11</span>,  <span class="comment">// 允许有一个水平滚动条 (默认关闭). You may use SetNextWindowContentSize(ImVec2(width,0.0f)); prior to calling Begin() to specify width. Read code in imgui_demo in the &quot;Horizontal Scrolling&quot; section.</span></span><br><span class="line">    ImGuiWindowFlags_NoFocusOnAppearing     = <span class="number">1</span> &lt;&lt; <span class="number">12</span>,  <span class="comment">// 从隐藏状态转换为可见状态时禁用获取焦点</span></span><br><span class="line">    ImGuiWindowFlags_NoBringToFrontOnFocus  = <span class="number">1</span> &lt;&lt; <span class="number">13</span>,  <span class="comment">// Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)</span></span><br><span class="line">    ImGuiWindowFlags_AlwaysVerticalScrollbar= <span class="number">1</span> &lt;&lt; <span class="number">14</span>,  <span class="comment">// 总是显示垂直滚动条(even if ContentSize.y &lt; Size.y)</span></span><br><span class="line">    ImGuiWindowFlags_AlwaysHorizontalScrollbar=<span class="number">1</span>&lt;&lt; <span class="number">15</span>,  <span class="comment">// 总是显示水平滚动条 (even if ContentSize.x &lt; Size.x)</span></span><br><span class="line">    ImGuiWindowFlags_AlwaysUseWindowPadding = <span class="number">1</span> &lt;&lt; <span class="number">16</span>,  <span class="comment">// 使用style.Window Padding 确保子窗体没有边框 (ignored by default for non-bordered child windows, because more convenient)</span></span><br><span class="line">    ImGuiWindowFlags_NoNavInputs            = <span class="number">1</span> &lt;&lt; <span class="number">18</span>,  <span class="comment">// 窗口内没有游戏手柄/键盘导航</span></span><br><span class="line">    ImGuiWindowFlags_NoNavFocus             = <span class="number">1</span> &lt;&lt; <span class="number">19</span>,  <span class="comment">// No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)</span></span><br><span class="line">    ImGuiWindowFlags_UnsavedDocument        = <span class="number">1</span> &lt;&lt; <span class="number">20</span>,  <span class="comment">// Display a dot next to the title. When used in a tab/docking context, tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.</span></span><br><span class="line">    ImGuiWindowFlags_NoNav                  = ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,</span><br><span class="line">    ImGuiWindowFlags_NoDecoration           = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse,</span><br><span class="line">    ImGuiWindowFlags_NoInputs               = ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,</span><br><span class="line"></span><br><span class="line">    <span class="comment">// [Internal]</span></span><br><span class="line">    ImGuiWindowFlags_NavFlattened           = <span class="number">1</span> &lt;&lt; <span class="number">23</span>,  <span class="comment">// [BETA] Allow gamepad/keyboard navigation to cross over parent border to this child (only use on child that have no scrolling!)</span></span><br><span class="line">    ImGuiWindowFlags_ChildWindow            = <span class="number">1</span> &lt;&lt; <span class="number">24</span>,  <span class="comment">// Don&#x27;t use! For internal use by BeginChild()</span></span><br><span class="line">    ImGuiWindowFlags_Tooltip                = <span class="number">1</span> &lt;&lt; <span class="number">25</span>,  <span class="comment">// Don&#x27;t use! For internal use by BeginTooltip()</span></span><br><span class="line">    ImGuiWindowFlags_Popup                  = <span class="number">1</span> &lt;&lt; <span class="number">26</span>,  <span class="comment">// Don&#x27;t use! For internal use by BeginPopup()</span></span><br><span class="line">    ImGuiWindowFlags_Modal                  = <span class="number">1</span> &lt;&lt; <span class="number">27</span>,  <span class="comment">// Don&#x27;t use! For internal use by BeginPopupModal()</span></span><br><span class="line">    ImGuiWindowFlags_ChildMenu              = <span class="number">1</span> &lt;&lt; <span class="number">28</span>   <span class="comment">// Don&#x27;t use! For internal use by BeginMenu()</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// [Obsolete]</span></span><br><span class="line">    <span class="comment">//ImGuiWindowFlags_ResizeFromAnySide    = 1 &lt;&lt; 17,  // --&gt; Set io.ConfigWindowsResizeFromEdges=true and make sure mouse cursors are supported by backend (io.BackendFlags &amp; ImGuiBackendFlags_HasMouseCursors)</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 弹出框: 打开 / 关闭 功能</span></span><br><span class="line"><span class="comment">// - OpenPopup(): 设置弹出框为打开, ImGuiPopupFlags 可用于打开选项</span></span><br><span class="line"><span class="comment">// - If not modal: 通过点击其他地方关闭弹出框 或者 点击 ESCAPE</span></span><br><span class="line"><span class="comment">// - CloseCurrentPopup(): 在 BeginPopup 到 EndPopup 命令执行中，调用 CloseCurrentPopup 可以手动关闭, 当 Selectable()/MenuItem() 激活时, CloseCurrentPopup()默认被调用 </span></span><br><span class="line"><span class="comment">// - Use ImGuiPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there&#x27;s already one at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to OpenPopup().</span></span><br><span class="line"><span class="comment">// - 在BeginPopup() 之后使用 IsWindowAppearing() 判断窗口是否刚刚打开</span></span><br><span class="line"><span class="function">IMGUI_API <span class="keyword">void</span> <span class="title">OpenPopup</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str_id, ImGuiPopupFlags popup_flags = <span class="number">0</span>)</span></span>;	<span class="comment">// call to mark popup as open (don&#x27;t call every frame!).</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 弹出层, 模态</span></span><br><span class="line"><span class="comment">// - 会阻塞 调用 后面的鼠标悬停检测(以及大多数鼠标交互)</span></span><br><span class="line"><span class="comment">// - if not modal: 通过点击其他地方关闭弹出框 或者 点击 ESCAPE</span></span><br><span class="line"><span class="comment">// - 可见性状态 (~bool) 是在内部保存的, 并不是被调用者保存</span></span><br><span class="line"><span class="comment">// - 上面的三个属性是相关的: 我们需要在库中保留弹出窗口可见性状态，因为弹出窗口可能随时关闭</span></span><br><span class="line"><span class="comment">// - 可以调用 IsItemHovered() or IsWindowHovered() 时使用 ImGuiHoveredFlags_AllowWhenBlockedByPopup 来绕过悬停限制</span></span><br><span class="line"><span class="comment">// - 重要提示: Popup 标识符时相对于当前 ID 堆栈的, 因此 OpenPopup 和 BeginPopup 一般需要在堆栈的同一级别</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Popups: begin/end functions</span></span><br><span class="line"><span class="comment">// -BeginPopup(): 查询弹出状态, 如果打开就附加到 window. 之后调用 EndPopup(). ImGuiWindowFlags 被转发到window</span></span><br><span class="line"><span class="comment">// -BeginPopupModal():  block every interactions behind the window, cannot be closed by user, add a dimming background, has a title bar.</span></span><br><span class="line"><span class="function">IMGUI_API <span class="keyword">bool</span> <span class="title">BeginPopup</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* str_id, ImGuiWindowFlags flags = <span class="number">0</span>)</span></span>;	<span class="comment">// return true if the popup is open, and you can start outputting to it.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 ]]></content>
@@ -334,7 +363,7 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
   </entry>
   <entry>
     <title>meson</title>
-    <url>/mingxingren/2021/07/29/meson/</url>
+    <url>/2021/07/29/meson/</url>
     <content><![CDATA[<h3 id="meson是什么"><a href="#meson是什么" class="headerlink" title="meson是什么"></a>meson是什么</h3><p><a href="https://mesonbuild.com/">Meson</a>是一个开源构建系统，旨在构建速度快和用户友好。</p>
 <h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
 <li>对多个平台支持，例如：<strong>Linux</strong>、<strong>macOS</strong>、<strong>Windows</strong>、<strong>GCC</strong>、<strong>Clang</strong>、<strong>Visual Studio</strong>等等</li>
@@ -359,8 +388,28 @@ start->op1->op2->op3->op4->op5->op6->op7->op9->op10->end</textarea><textarea id=
       </tags>
   </entry>
   <entry>
+    <title>qml之PathView</title>
+    <url>/2021/06/27/qml%E4%B9%8BPathView/</url>
+    <content><![CDATA[<p>通过学习委托，涉及到 <strong>ListView</strong>、<strong>GridView</strong>、<strong>PathView</strong>等等；其中 <strong>PathView</strong> 的画风明显和 <strong>ListView</strong> 和 <strong>GridView</strong> 不一样，它的使用方式比较复杂，当然实现的效果真的很棒。那什么是 <strong>PathView</strong> 呢？</p>
+<h2 id="PathView的定义"><a href="#PathView的定义" class="headerlink" title="PathView的定义"></a>PathView的定义</h2><p>首先先看 <strong>Qt</strong> 对<strong>PathView</strong>的描述如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 摘自 Qt Quick 5.12.2</span><br><span class="line">A PathView displays data from models created from built-in QML types like ListModel and XmlListModel, or custom model classes defined in C++ that inherit from QAbstractListModel.</span><br><span class="line">The view has a model, which defines the data to be displayed, and a delegate, which defines how the data should be displayed. The delegate is instantiated for each item on the path. The items may be flicked to move them along the path.</span><br></pre></td></tr></table></figure>
+
+<p>这段描述比较轻描淡写，但它得作用类似 <strong>ListView</strong> 和 <strong>GridView</strong> 都是给 <strong>item</strong> 进行布局，但是不同于 <strong>ListView</strong> 列表形式的布局和 <strong>GirdView</strong> 栅格布局这种有规律描述布局，<strong>PathView</strong> 是根据用户提供路径， 将<strong>item</strong>按这个路径进行排布，比如：实现<strong>item</strong> 按照规则的曲线排布，这种排布方式是无规则的并不能通过一个统一的公式计算出<strong>item</strong>的分布。但<strong>PathView</strong> 可以实现类似的效果！通过自定义自己的路线组，让<strong>item</strong>按自定义的路径进行分布！</p>
+<h2 id="PathView的使用"><a href="#PathView的使用" class="headerlink" title="PathView的使用"></a>PathView的使用</h2><p>代码如下：</p>
+<figure class="highlight qml"><table><tr><td class="code"><pre><span class="line"><span class="title">Component</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> delegate_1</span></span><br><span class="line">	<span class="title">Column</span> &#123;</span><br><span class="line">		<span class="attribute">id:</span><span class="string"> wrapper</span></span><br><span class="line">		<span class="attribute">opacity</span>: PathView.isCurrentItem ? <span class="number">1</span> : <span class="number">0.5</span></span><br><span class="line">		<span class="title">Text</span> &#123;</span><br><span class="line">			<span class="attribute">id:</span><span class="string"> nameText</span></span><br><span class="line">			<span class="attribute">text</span>: name</span><br><span class="line">			<span class="attribute">font.pointSize</span>: <span class="number">16</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">ListModel</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> list_model</span></span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Bill Jones&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Jane Doe&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">PathView</span> &#123;</span><br><span class="line">	<span class="attribute">anchors.fill</span>: <span class="built_in">parent</span></span><br><span class="line">	<span class="attribute">model</span>: list_model</span><br><span class="line">	<span class="attribute">delegate</span>: delegate_1</span><br><span class="line">	<span class="comment">// PathView 通过给予 path 属性自定义路径, 让 item 按 Path&#123;&#125; 定义路径分布</span></span><br><span class="line">	<span class="attribute">path</span>: <span class="title">Path</span>&#123;</span><br><span class="line">		<span class="attribute">startX</span>: <span class="number">200</span>; <span class="attribute">startY</span>: <span class="number">100</span>	<span class="comment">// 路径得起点 (200, 100)</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">200</span> &#125;	<span class="comment">// 从起点到 (200 + relativeX, 100, relativeY) 的直线</span></span><br><span class="line">		<span class="title">PathPercent</span> &#123; <span class="attribute">value</span>: <span class="number">0.5</span> &#125;	<span class="comment">// 设置前一个路径上可以分布多少比例的item 数量</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">-200</span> &#125; <span class="comment">// 以上一条路径的终点为起点开始的一条路径</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<strong>PathView</strong> 通过给予 <strong>path</strong> 属性自定义路径, 让 <strong>item</strong> 按 <strong>Path{}</strong> 定义路径分布。Path{} 提供了多个描述路径对象，如下图：</p>
+<p><img src="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021062701.png" alt="image-01"></p>
+<h4 id="PathLine使用"><a href="#PathLine使用" class="headerlink" title="PathLine使用"></a>PathLine使用</h4><p><strong>PathLine</strong> 顾名思义描述一条直线路径，其起点是上一条路径终点。</p>
+]]></content>
+      <tags>
+        <tag>Qt</tag>
+        <tag>QML</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>OpenGL知识整理</title>
-    <url>/mingxingren/2021/12/22/opengl%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
+    <url>/2021/12/22/opengl%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
     <content><![CDATA[<h2 id="OpenGL-Sharders（着色器）"><a href="#OpenGL-Sharders（着色器）" class="headerlink" title="OpenGL Sharders（着色器）"></a>OpenGL Sharders（着色器）</h2><h3 id="GPU显示数据流程"><a href="#GPU显示数据流程" class="headerlink" title="GPU显示数据流程"></a>GPU显示数据流程</h3><p><img src="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021123001.png" alt="image-01"></p>
 <h3 id="顶点着色器的坐标系统"><a href="#顶点着色器的坐标系统" class="headerlink" title="顶点着色器的坐标系统"></a>顶点着色器的坐标系统</h3><p>顶点着色器的坐标很有意思,  它使用 -1 和 1表示坐标系轴方向上的负边界和正边界.  仔细想想确实应该如此，假使我们想渲染的一块区域的大小是 10x10大小的矩形，那么边界就是 -5 ~ 5，当区域是20x20时，边界便改为 -10~10. 我猜如果以确定边界绘制左边代码便不具有普适性，这个矩形尺寸调整一下，那个矩形尺寸调整一下. 所以统一用 -1 和 1表示边界值, 中间值乘以系数表示其他坐标点，这样就不用受到渲染矩形区域大小的影响.</p>
 <p><img src="https://github.com/mingxingren/Notes/raw/master/resource/photo/image-2021120501.png" alt="image-01"></p>
@@ -470,28 +519,8 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
       </tags>
   </entry>
   <entry>
-    <title>qml之PathView</title>
-    <url>/mingxingren/2021/06/27/qml%E4%B9%8BPathView/</url>
-    <content><![CDATA[<p>通过学习委托，涉及到 <strong>ListView</strong>、<strong>GridView</strong>、<strong>PathView</strong>等等；其中 <strong>PathView</strong> 的画风明显和 <strong>ListView</strong> 和 <strong>GridView</strong> 不一样，它的使用方式比较复杂，当然实现的效果真的很棒。那什么是 <strong>PathView</strong> 呢？</p>
-<h2 id="PathView的定义"><a href="#PathView的定义" class="headerlink" title="PathView的定义"></a>PathView的定义</h2><p>首先先看 <strong>Qt</strong> 对<strong>PathView</strong>的描述如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// 摘自 Qt Quick 5.12.2</span><br><span class="line">A PathView displays data from models created from built-in QML types like ListModel and XmlListModel, or custom model classes defined in C++ that inherit from QAbstractListModel.</span><br><span class="line">The view has a model, which defines the data to be displayed, and a delegate, which defines how the data should be displayed. The delegate is instantiated for each item on the path. The items may be flicked to move them along the path.</span><br></pre></td></tr></table></figure>
-
-<p>这段描述比较轻描淡写，但它得作用类似 <strong>ListView</strong> 和 <strong>GridView</strong> 都是给 <strong>item</strong> 进行布局，但是不同于 <strong>ListView</strong> 列表形式的布局和 <strong>GirdView</strong> 栅格布局这种有规律描述布局，<strong>PathView</strong> 是根据用户提供路径， 将<strong>item</strong>按这个路径进行排布，比如：实现<strong>item</strong> 按照规则的曲线排布，这种排布方式是无规则的并不能通过一个统一的公式计算出<strong>item</strong>的分布。但<strong>PathView</strong> 可以实现类似的效果！通过自定义自己的路线组，让<strong>item</strong>按自定义的路径进行分布！</p>
-<h2 id="PathView的使用"><a href="#PathView的使用" class="headerlink" title="PathView的使用"></a>PathView的使用</h2><p>代码如下：</p>
-<figure class="highlight qml"><table><tr><td class="code"><pre><span class="line"><span class="title">Component</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> delegate_1</span></span><br><span class="line">	<span class="title">Column</span> &#123;</span><br><span class="line">		<span class="attribute">id:</span><span class="string"> wrapper</span></span><br><span class="line">		<span class="attribute">opacity</span>: PathView.isCurrentItem ? <span class="number">1</span> : <span class="number">0.5</span></span><br><span class="line">		<span class="title">Text</span> &#123;</span><br><span class="line">			<span class="attribute">id:</span><span class="string"> nameText</span></span><br><span class="line">			<span class="attribute">text</span>: name</span><br><span class="line">			<span class="attribute">font.pointSize</span>: <span class="number">16</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">ListModel</span> &#123;</span><br><span class="line">	<span class="attribute">id:</span><span class="string"> list_model</span></span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Bill Jones&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;Jane Doe&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="title">ListElement</span> &#123;</span><br><span class="line">		<span class="attribute">name</span>: <span class="string">&quot;John Smith&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title">PathView</span> &#123;</span><br><span class="line">	<span class="attribute">anchors.fill</span>: <span class="built_in">parent</span></span><br><span class="line">	<span class="attribute">model</span>: list_model</span><br><span class="line">	<span class="attribute">delegate</span>: delegate_1</span><br><span class="line">	<span class="comment">// PathView 通过给予 path 属性自定义路径, 让 item 按 Path&#123;&#125; 定义路径分布</span></span><br><span class="line">	<span class="attribute">path</span>: <span class="title">Path</span>&#123;</span><br><span class="line">		<span class="attribute">startX</span>: <span class="number">200</span>; <span class="attribute">startY</span>: <span class="number">100</span>	<span class="comment">// 路径得起点 (200, 100)</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">200</span> &#125;	<span class="comment">// 从起点到 (200 + relativeX, 100, relativeY) 的直线</span></span><br><span class="line">		<span class="title">PathPercent</span> &#123; <span class="attribute">value</span>: <span class="number">0.5</span> &#125;	<span class="comment">// 设置前一个路径上可以分布多少比例的item 数量</span></span><br><span class="line">		<span class="title">PathLine</span> &#123; <span class="attribute">relativeX</span>: <span class="number">200</span>; <span class="attribute">relativeY</span>: <span class="number">-200</span> &#125; <span class="comment">// 以上一条路径的终点为起点开始的一条路径</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，<strong>PathView</strong> 通过给予 <strong>path</strong> 属性自定义路径, 让 <strong>item</strong> 按 <strong>Path{}</strong> 定义路径分布。Path{} 提供了多个描述路径对象，如下图：</p>
-<p><img src="https://raw.githubusercontent.com/mingxingren/Notes/master/resource/photo/image-2021062701.png" alt="image-01"></p>
-<h4 id="PathLine使用"><a href="#PathLine使用" class="headerlink" title="PathLine使用"></a>PathLine使用</h4><p><strong>PathLine</strong> 顾名思义描述一条直线路径，其起点是上一条路径终点。</p>
-]]></content>
-      <tags>
-        <tag>Qt</tag>
-        <tag>QML</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>rust知识整理</title>
-    <url>/mingxingren/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
+    <url>/2021/10/12/rust%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
     <content><![CDATA[<ol>
 <li>Rust 的克隆与复制</li>
 </ol>
@@ -681,7 +710,7 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
   </entry>
   <entry>
     <title>光照</title>
-    <url>/mingxingren/2022/06/21/%E5%85%89%E7%85%A7/</url>
+    <url>/2022/06/21/%E5%85%89%E7%85%A7/</url>
     <content><![CDATA[<h1 id="光照"><a href="#光照" class="headerlink" title="光照"></a>光照</h1><h2 id="简单的颜色叠加"><a href="#简单的颜色叠加" class="headerlink" title="简单的颜色叠加"></a>简单的颜色叠加</h2><p>两个颜色向量相乘等于最终的反射颜色</p>
 <h2 id="基础光照"><a href="#基础光照" class="headerlink" title="基础光照"></a>基础光照</h2><p>① 环境光照(Ambient Lighting): 即使在黑暗的情况下，世界上通常也仍然有一些光亮(月亮、远处的光)，所以物体几乎永远不会是完全黑暗的. 为了模拟这个，我们会使用一个环境光照常量，它永远给物体一些颜色.</p>
 <p>实现:  用光的颜色乘以一个很小常量环境因子，再乘以物体的颜色，然后将最终结果作为片段的颜色.</p>
@@ -718,7 +747,7 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
   </entry>
   <entry>
     <title>基于FFmpeg和DX11的流媒体视频——翻译</title>
-    <url>/mingxingren/2022/03/27/%E5%9F%BA%E4%BA%8EFFmpeg%E5%92%8CDX11%E7%9A%84%E6%B5%81%E5%AA%92%E4%BD%93%E8%A7%86%E9%A2%91%E2%80%94%E2%80%94%E7%BF%BB%E8%AF%91/</url>
+    <url>/2022/03/27/%E5%9F%BA%E4%BA%8EFFmpeg%E5%92%8CDX11%E7%9A%84%E6%B5%81%E5%AA%92%E4%BD%93%E8%A7%86%E9%A2%91%E2%80%94%E2%80%94%E7%BF%BB%E8%AF%91/</url>
     <content><![CDATA[<h1 id="基于FFMPEG-和-DirectX11的流媒体视频"><a href="#基于FFMPEG-和-DirectX11的流媒体视频" class="headerlink" title="基于FFMPEG 和 DirectX11的流媒体视频"></a>基于FFMPEG 和 DirectX11的流媒体视频</h1><p>事情起因：因为工作需求，我需要使用ffmpeg进行硬解实时视频并显示到屏幕, 但是性能一直不太理想。偶然发现一篇英文博客与我的需求类似，所以我决定翻译这边英文博客，这是原文地址：<a href="https://medium.com/swlh/streaming-video-with-ffmpeg-and-directx-11-7395fcb372c4">https://medium.com/swlh/streaming-video-with-ffmpeg-and-directx-11-7395fcb372c4</a></p>
 <p>在几个月之前，我被分配开发一个低延迟的视频播放器。在之前，我只接触过FFmpeg没接触过DirectX11。但是我认为它应该不难。FFmpeg是非常受欢迎的，DirectX11也出现了很长一段时间了，并且我应该不会用到3D图形或者更复杂的东西。</p>
 <p>所以，应该会有一些能借鉴的解码和渲染视频例子，是吧？</p>
@@ -798,7 +827,7 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
   </entry>
   <entry>
     <title>开发中遇到的有关Qt的问题</title>
-    <url>/mingxingren/2021/06/12/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%89%E5%85%B3Qt%E7%9A%84%E9%97%AE%E9%A2%98/</url>
+    <url>/2021/06/12/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E6%9C%89%E5%85%B3Qt%E7%9A%84%E9%97%AE%E9%A2%98/</url>
     <content><![CDATA[<ol>
 <li><p>向下面的代码对某 a 列设置伸展属性后， 再设置 b 列的列宽为 0 时导致无法隐藏这一列，b 列会显示一个固定宽度</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">ui-&gt;tablewidget-&gt;<span class="built_in">horizontalHeader</span>()-&gt;<span class="built_in">setSectionResizeModel</span>(<span class="number">1</span>, QHeaderView::Stretch);</span><br></pre></td></tr></table></figure></li>
@@ -903,15 +932,33 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
   </entry>
   <entry>
     <title>真心为你</title>
-    <url>/mingxingren/2022/07/13/%E7%9C%9F%E5%BF%83%E4%B8%BA%E4%BD%A0/</url>
+    <url>/2022/07/13/%E7%9C%9F%E5%BF%83%E4%B8%BA%E4%BD%A0/</url>
     <content><![CDATA[<h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="真心为你"><a href="#真心为你" class="headerlink" title="真心为你"></a>真心为你</h1>]]></content>
       <tags>
         <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
+    <title>科目三考试笔记</title>
+    <url>/2022/09/14/%E7%A7%91%E7%9B%AE%E4%B8%89%E8%80%83%E8%AF%95%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<p>[TOC]</p>
+<h2 id="远近交替"><a href="#远近交替" class="headerlink" title="远近交替"></a>远近交替</h2><p>① 应用场景: 急弯、坡路、拱桥</p>
+<p>② 通过人行横道 没有交通信号的路口、</p>
+<p>③ 超车</p>
+<h2 id="远光灯"><a href="#远光灯" class="headerlink" title="远光灯"></a>远光灯</h2><p>① 夜间无照明，照明不良的道路行驶</p>
+<h2 id="近光灯"><a href="#近光灯" class="headerlink" title="近光灯"></a>近光灯</h2><p>① 近距离跟车行驶</p>
+<p>② 照明良好的道路</p>
+<p>③ 有交通信号灯的路口</p>
+<p>④ 夜间会车</p>
+<h2 id="示廓灯-危险警报灯"><a href="#示廓灯-危险警报灯" class="headerlink" title="示廓灯+危险警报灯"></a>示廓灯+危险警报灯</h2><p>① 路边临时停车，提示他人注意</p>
+]]></content>
+      <tags>
+        <tag>其他</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>QML 学习之路</title>
-    <url>/mingxingren/2021/06/12/qml%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85/</url>
+    <url>/2021/06/12/qml%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85/</url>
     <content><![CDATA[<p>工作了三年，一直用<strong>QGui</strong> 开发比较简单的程序，之所以开始接触<strong>QML</strong>是因为现在客户端已经逐渐转入<strong>JavaScript</strong> 那套开发模式，这绝非危言耸听，并且推出 <strong>webassembly</strong> 后，我认为客户端和前端会逐渐走向<strong>UI</strong>逻辑由<strong>JavaScript</strong>编写，高性能的运算和操作系统设备会给 <strong>C/C++/Rust</strong> 编写的 <strong>webassembly</strong>  模块执行，这可能客户端真正意义上的强后端分离。虽然很不想承认，自己过去三年所学的技术正在犹如日出日落般推出主流的客户端开发，可能仅仅只能维持老的项目和嵌入式方向， 但客户端和前端能做的事情变得越来越多，深度也在不加深，以前人们一直以为后端比前端更有技术含量，从现在来看，前端程序员逐渐百花齐放起来，他们实现得很多效果，我自认拍马也赶不上。 为了以后能有碗饭吃，我决定给自己挖一口井，学习<strong>QML</strong> 并从<strong>QML</strong>逐渐过度到前端学习上。好了，现在开始吧！</p>
 <h2 id="什么是-QML"><a href="#什么是-QML" class="headerlink" title="什么是 QML"></a>什么是 <strong>QML</strong></h2><p>可能你对 <strong>HTML</strong> 比较熟悉，其实 <strong>QML</strong> 要做的事情和HTML 有些类似 —— 描述用户界面。<strong>QML</strong> 用于描述用户界面元素的形状和行为。用户界面能够使用 <strong>JavaScript</strong> 来提供修饰，或者增加更加复杂的逻辑。其结构层次：子元素从父元素上继承坐标系统，它的 <strong>x，y</strong> 坐标总是对应于它的父元素坐标系统。</p>
 <p>首先使用一个简单的 <strong>QML</strong> 例子：</p>
@@ -1313,53 +1360,6 @@ texture unit->fs texture变量: 映射</textarea><textarea id="sequence-0-option
       <tags>
         <tag>Qt</tag>
         <tag>QML</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C#知识整理</title>
-    <url>/mingxingren/2022/07/28/C#%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<ol>
-<li><p>C#  函数传递地址的方式有</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">static void AddSum(ref int i, int j)</span><br><span class="line">&#123;</span><br><span class="line">   i += j;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 调用</span><br><span class="line">AddSum(ref a, b);</span><br></pre></td></tr></table></figure></li>
-<li><p>C# 中的数据类型分 <code>值类型</code> 和 <code>引用类型</code>.</p>
-<p>① 值类型: 直接存储数据的值, 保存在内存中. 一些预定义简单类型,  例如: <code>int</code>, <code>float</code>, <code>bool</code>, <code>char</code> 都是值类型, 另外 <code>enum</code>, <code>struct</code> 也是值类型</p>
-<p>② 引用类型: 存储对值的引用, 实际上存储的就是一个内存的地址. <code>string</code>, <code>数组</code>,<code>class</code>, <code>interface</code>, <code>委托</code>和 <code>封装</code> 都是引用类型，其中 string 是比较特殊的引用类型</p>
-</li>
-<li><p>C# 泛型编程使用 <code>where</code> 约束</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">    约束                说明</span><br><span class="line">    T: struct          类型参数必须是值类型. 可以指定除 Nullable 以外的任何值类型</span><br><span class="line">    </span><br><span class="line">    T: class           类型参数必须是引用类型，包括任何类、接口、委托或者数组类型</span><br><span class="line">    </span><br><span class="line">    T：new()            类型参数必须具有无参数的公共构造函数. 当与其他约束一起使用时, new()</span><br><span class="line">                        约束必须最后指定</span><br><span class="line">    </span><br><span class="line">    T:&lt;基类名&gt;           类型参数必须是指定的基类或派生自指定的基类</span><br><span class="line">    </span><br><span class="line">    T:&lt;接口名称&gt;         类型参数必须是指定的接口或者实现指定的接口. 可以指定多个接口约束. 约束</span><br><span class="line">                        接口也可以是泛型的</span><br><span class="line">    </span><br><span class="line">    T: U                为 T 提供的类型参数必须是为 U 提供的参数或派生自为 U 提供的参数.</span><br><span class="line">                        这称为裸类型约束</span><br></pre></td></tr></table></figure></li>
-<li><p>C# params 关键字</p>
-<p>在 C# 中, 使用 <code>params</code> 关键字可以给一个方法 (method) 传递数量可变的参数 ( paramter ), 类似于<code>python</code> 中的 <code>*arg</code></p>
-<p>注:</p>
-<p>① <code>params</code>后面的参数类型必须是一个数组</p>
-<p>② <code>params</code>后面不允许再有其他参数</p>
-<p>③ 一个方法的申明中只能又一个 <code>params</code> 关键字</p>
-<p>传递方式:</p>
-<p>① 用逗号分隔的一串参数</p>
-<p>② 一个一维数组</p>
-<p>③ 空参数, <code>length</code> 为 0</p>
-</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>C#</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>科目三考试笔记</title>
-    <url>/mingxingren/2022/09/14/%E7%A7%91%E7%9B%AE%E4%B8%89%E8%80%83%E8%AF%95%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<p>[TOC]</p>
-<h2 id="远近交替"><a href="#远近交替" class="headerlink" title="远近交替"></a>远近交替</h2><p>① 应用场景: 急弯、坡路、拱桥</p>
-<p>② 通过人行横道 没有交通信号的路口、</p>
-<p>③ 超车</p>
-<h2 id="远光灯"><a href="#远光灯" class="headerlink" title="远光灯"></a>远光灯</h2><p>① 夜间无照明，照明不良的道路行驶</p>
-<h2 id="近光灯"><a href="#近光灯" class="headerlink" title="近光灯"></a>近光灯</h2><p>① 近距离跟车行驶</p>
-<p>② 照明良好的道路</p>
-<p>③ 有交通信号灯的路口</p>
-<p>④ 夜间会车</p>
-<h2 id="示廓灯-危险警报灯"><a href="#示廓灯-危险警报灯" class="headerlink" title="示廓灯+危险警报灯"></a>示廓灯+危险警报灯</h2><p>① 路边临时停车，提示他人注意</p>
-]]></content>
-      <tags>
-        <tag>其他</tag>
       </tags>
   </entry>
 </search>
